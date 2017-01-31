@@ -1,7 +1,8 @@
 package com.rbac.model;
-// Generated Jan 30, 2017 10:05:45 AM by Hibernate Tools 4.3.1.Final
+// Generated Jan 31, 2017 9:22:44 AM by Hibernate Tools 4.3.1.Final
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -13,12 +14,12 @@ public class User implements java.io.Serializable {
 	private String name;
 	private String username;
 	private String password;
-	private Set<UserRole> userRoles = new HashSet<UserRole>(0);
+	private List<UserRole> userRoles = new ArrayList<UserRole>(0);
 
 	public User() {
 	}
 
-	public User(String name, String username, String password, Set<UserRole> userRoles) {
+	public User(String name, String username, String password, List<UserRole> userRoles) {
 		this.name = name;
 		this.username = username;
 		this.password = password;
@@ -57,12 +58,17 @@ public class User implements java.io.Serializable {
 		this.password = password;
 	}
 
-	public Set<UserRole> getUserRoles() {
+	public List<UserRole> getUserRoles() {
 		return this.userRoles;
 	}
 
-	public void setUserRoles(Set<UserRole> userRoles) {
+	public void setUserRoles(List<UserRole> userRoles) {
 		this.userRoles = userRoles;
+	}
+	
+	@Override
+	public String toString() {
+		return id + ") " + name;
 	}
 
 }

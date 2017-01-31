@@ -114,4 +114,16 @@ public class RoleHome {
 			throw re;
 		}
 	}
+	
+	public List<Role> getAllRoles() {
+		log.debug("get all roles by example");
+		try {
+			List<Role> results = (List<Role>) sessionFactory.getCurrentSession().createCriteria("com.rbac.model.Role").list();
+			log.debug("get all roles successful, result size: " + results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("get all roles failed", re);
+			throw re;
+		}
+	}
 }

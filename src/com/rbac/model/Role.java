@@ -1,7 +1,9 @@
 package com.rbac.model;
-// Generated Jan 30, 2017 10:05:45 AM by Hibernate Tools 4.3.1.Final
+// Generated Jan 31, 2017 9:22:44 AM by Hibernate Tools 4.3.1.Final
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -11,13 +13,13 @@ public class Role implements java.io.Serializable {
 
 	private Integer id;
 	private String name;
-	private Set<UserRole> userRoles = new HashSet<UserRole>(0);
-	private Set<RolePermission> rolePermissions = new HashSet<RolePermission>(0);
+	private List<UserRole> userRoles = new ArrayList<UserRole>(0);
+	private List<RolePermission> rolePermissions = new ArrayList<RolePermission>(0);
 
 	public Role() {
 	}
 
-	public Role(String name, Set<UserRole> userRoles, Set<RolePermission> rolePermissions) {
+	public Role(String name, List<UserRole> userRoles, List<RolePermission> rolePermissions) {
 		this.name = name;
 		this.userRoles = userRoles;
 		this.rolePermissions = rolePermissions;
@@ -39,20 +41,25 @@ public class Role implements java.io.Serializable {
 		this.name = name;
 	}
 
-	public Set<UserRole> getUserRoles() {
+	public List<UserRole> getUserRoles() {
 		return this.userRoles;
 	}
 
-	public void setUserRoles(Set<UserRole> userRoles) {
+	public void setUserRoles(List<UserRole> userRoles) {
 		this.userRoles = userRoles;
 	}
 
-	public Set<RolePermission> getRolePermissions() {
+	public List<RolePermission> getRolePermissions() {
 		return this.rolePermissions;
 	}
 
-	public void setRolePermissions(Set<RolePermission> rolePermissions) {
+	public void setRolePermissions(List<RolePermission> rolePermissions) {
 		this.rolePermissions = rolePermissions;
+	}
+	
+	@Override
+	public String toString() {
+		return id + ") " + name;
 	}
 
 }

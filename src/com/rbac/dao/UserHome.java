@@ -114,4 +114,16 @@ public class UserHome {
 			throw re;
 		}
 	}
+	
+	public List<User> getAllUser() {
+		log.debug("Get all users");
+		try {
+			List<User> results = (List<User>) sessionFactory.getCurrentSession().createCriteria("com.rbac.model.User").list();
+			log.debug("Get all users successful, result size: " + results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("Get all users failed", re);
+			throw re;
+		}
+	}
 }

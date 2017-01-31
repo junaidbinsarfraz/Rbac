@@ -14,6 +14,7 @@ import static org.hibernate.criterion.Example.create;
 
 /**
  * Home object for domain model class Permission.
+ * 
  * @see com.rbac.model.Permission
  */
 public class PermissionHome {
@@ -112,6 +113,18 @@ public class PermissionHome {
 			return results;
 		} catch (RuntimeException re) {
 			log.error("find by example failed", re);
+			throw re;
+		}
+	}
+
+	public List<Permission> getAllPermissions() {
+		log.debug("get all permissions by example");
+		try {
+			List<Permission> results = (List<Permission>) sessionFactory.getCurrentSession().createCriteria("com.rbac.model.Permission").list();
+			log.debug("get all permissions successful, result size: " + results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("get all permissions failed", re);
 			throw re;
 		}
 	}
