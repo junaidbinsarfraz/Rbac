@@ -106,4 +106,12 @@ public class PermissionController {
 		permissionHome.delete(permission);
 	}
 	
+	public void saveResource(Resource resource) {
+		resourceHome.attachDirty(resource);
+	}
+	
+	public List<Resource> getResources(Resource resource) {
+		return resourceHome.findByExample(resource);
+	}
+	
 }

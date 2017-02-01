@@ -7,13 +7,14 @@ import com.rbac.dao.PermissionHome;
 import com.rbac.dao.ResourceHome;
 import com.rbac.dao.UserHome;
 import com.rbac.dao.UserRoleHome;
+import com.rbac.model.Resource;
 import com.rbac.model.User;
 import com.rbac.model.UserRole;
 
 public class UserController {
 	
 	AcessTypeHome acessTypeHome = new AcessTypeHome();
-	ResourceHome resourceTypeHome = new ResourceHome();
+	ResourceHome resourceHome = new ResourceHome();
 	UserHome userHome = new UserHome();
 	PermissionHome permissionHome = new PermissionHome();
 	UserRoleHome userRoleHome = new UserRoleHome();

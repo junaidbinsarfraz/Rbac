@@ -1,6 +1,7 @@
 package com.rbac.test;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -82,8 +83,49 @@ public class Test {
 				// Create File
 				
 				// Add in resource table
+				System.out.print("Enter file name : ");
+				String fileName = scan.nextLine();
 				
-				// Check permissions - By default any user can create resource
+				FileUtil.writeIntoFile(fileName, "");
+				
+				Resource resource = new Resource();
+				
+				resource.setName(fileName);
+				resource.setStatus(Boolean.TRUE);
+				
+				test.permissionController.saveResource(resource);
+				
+//				Permission permission = new Permission();
+				
+				resource = test.permissionController.getResources(resource) != null ? test.permissionController.getResources(resource).get(0) : null;
+				
+				if(resource == null) {
+					System.out.println("Unable to save resource");
+					continue;
+				}
+				
+				List<AcessType> acessTypes = test.permissionController.getAllAcessTypes();
+				
+				List<Permission> permissions = new ArrayList<Permission>();
+				
+				for(AcessType acessType : acessTypes) {
+					
+					if(!(Constants.ACCESS_TYPE_CREATE.equals(acessType.getName()) || Constants.ACCESS_TYPE_CREATE.equals(acessType.getName()) || 
+							Constants.ACCESS_TYPE_CREATE.equals(acessType.getName()) || Constants.ACCESS_TYPE_CREATE.equals(acessType.getName()))) {
+						continue;
+					}
+					
+					Permission newPermission = new Permission();
+					
+					newPermission.setAccesstypeid(acessType.getId());
+					newPermission.setResourceid(resource.getId());
+					
+					permissions.add(newPermission);
+				}
+				
+				for(Permission newPermission : permissions) {
+					test.permissionController.savePermission(newPermission);
+				}
 
 			} else if ("3".equals(input)) {
 				// View File
@@ -202,10 +244,52 @@ public class Test {
 
 				} else if ("7".equals(input)) {
 					// Create Schedule
-
-					// Check permissions - By default any user can create
-					// resource
-
+					
+					// Add in resource table
+					System.out.print("Enter schedule file name : ");
+					String fileName = scan.nextLine();
+					
+					FileUtil.writeIntoFile(fileName, "");
+					
+					Resource resource = new Resource();
+					
+					resource.setName(fileName);
+					resource.setStatus(Boolean.TRUE);
+					
+					test.permissionController.saveResource(resource);
+					
+//					Permission permission = new Permission();
+					
+					resource = test.permissionController.getResources(resource) != null ? test.permissionController.getResources(resource).get(0) : null;
+					
+					if(resource == null) {
+						System.out.println("Unable to save resource");
+						continue;
+					}
+					
+					List<AcessType> acessTypes = test.permissionController.getAllAcessTypes();
+					
+					List<Permission> permissions = new ArrayList<Permission>();
+					
+					for(AcessType acessType : acessTypes) {
+						
+						if(Constants.ACCESS_TYPE_CREATE.equals(acessType.getName()) || Constants.ACCESS_TYPE_CREATE.equals(acessType.getName()) || 
+								Constants.ACCESS_TYPE_CREATE.equals(acessType.getName()) || Constants.ACCESS_TYPE_CREATE.equals(acessType.getName())) {
+							continue;
+						}
+						
+						Permission newPermission = new Permission();
+						
+						newPermission.setAccesstypeid(acessType.getId());
+						newPermission.setResourceid(resource.getId());
+						
+						permissions.add(newPermission);
+					}
+					
+					for(Permission newPermission : permissions) {
+						test.permissionController.savePermission(newPermission);
+					}
+					
 				} else if ("8".equals(input)) {
 					// Update Schedule
 
