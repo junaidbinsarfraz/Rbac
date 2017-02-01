@@ -115,4 +115,16 @@ public class UserRoleHome {
 			throw re;
 		}
 	}
+
+	public List<UserRole> getAllUserRoles() {
+		log.debug("get all user roles");
+		try {
+			List<UserRole> results = (List<UserRole>) sessionFactory.getCurrentSession().createCriteria("com.rbac.model.UserRole").list();
+			log.debug("get all user roles successful, result size: " + results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("get all user roles failed", re);
+			throw re;
+		}
+	}
 }

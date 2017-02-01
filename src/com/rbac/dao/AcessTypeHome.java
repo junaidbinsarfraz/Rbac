@@ -115,4 +115,18 @@ public class AcessTypeHome {
 			throw re;
 		}
 	}
+	
+
+
+	public List<AcessType> getAllAcessTypes() {
+		log.debug("get all AcessTypes");
+		try {
+			List<AcessType> results = (List<AcessType>) sessionFactory.getCurrentSession().createCriteria("com.rbac.model.AcessType").list();
+			log.debug("get all AcessTypes successful, result size: " + results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("get all AcessTypes failed", re);
+			throw re;
+		}
+	}
 }

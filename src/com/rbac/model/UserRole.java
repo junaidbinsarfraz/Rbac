@@ -51,5 +51,10 @@ public class UserRole implements java.io.Serializable {
 	public void setStatus(Boolean status) {
 		this.status = status;
 	}
+	
+	@Override
+	public String toString() {
+		return id + ") " + user != null ? "User : " + user.getName() + " " : "" + role != null ? "Has Role : " + role.getName() : "";
+	}
 
 }

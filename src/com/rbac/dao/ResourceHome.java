@@ -115,4 +115,16 @@ public class ResourceHome {
 			throw re;
 		}
 	}
+
+	public List<Resource> getAllResources() {
+		log.debug("get all resource");
+		try {
+			List<Resource> results = (List<Resource>) sessionFactory.getCurrentSession().createCriteria("com.rbac.model.Resource").list();
+			log.debug("get all resource successful, result size: " + results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("get all resource failed", re);
+			throw re;
+		}
+	}
 }

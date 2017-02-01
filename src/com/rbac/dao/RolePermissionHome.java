@@ -115,4 +115,16 @@ public class RolePermissionHome {
 			throw re;
 		}
 	}
+	
+	public List<RolePermission> getAllRolePermission() {
+		log.debug("get all Role Permission");
+		try {
+			List<RolePermission> results = (List<RolePermission>) sessionFactory.getCurrentSession().createCriteria("com.rbac.model.RolePermission").list();
+			log.debug("get all Role Permission successful, result size: " + results.size());
+			return results;
+		} catch (RuntimeException re) {
+			log.error("get all Role Permission failed", re);
+			throw re;
+		}
+	}
 }

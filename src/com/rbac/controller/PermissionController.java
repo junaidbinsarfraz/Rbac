@@ -19,6 +19,7 @@ public class PermissionController {
 	ResourceHome resourceTypeHome = new ResourceHome();
 	UserHome userHome = new UserHome();
 	PermissionHome permissionHome = new PermissionHome();
+	ResourceHome resourceHome = new ResourceHome();
 
 	public Boolean isPermitted(User user, Resource resource, AcessType acessType) {
 
@@ -84,5 +85,25 @@ public class PermissionController {
 	public List<Permission> getAllPermissions() {
 		return permissionHome.getAllPermissions();
 	}
-
+	
+	public Permission getPermissionById(Integer id) {
+		return permissionHome.findById(id);
+	}
+	
+	public List<AcessType> getAllAcessTypes() {
+		return acessTypeHome.getAllAcessTypes();
+	}
+	
+	public List<Resource> getAllResources() {
+		return resourceHome.getAllResources();
+	}
+	
+	public void savePermission(Permission permission) {
+		permissionHome.attachDirty(permission);
+	}
+	
+	public void deletePermission(Permission permission) {
+		permissionHome.delete(permission);
+	}
+	
 }

@@ -50,4 +50,24 @@ public class UserController {
 		}
 	}
 	
+	public List<UserRole> getAllUserRoles() {
+		return userRoleHome.getAllUserRoles();
+	}
+	
+	public List<UserRole> getUserRoles(UserRole userRole) {
+		return userRoleHome.findByExample(userRole);
+	}
+	
+	public void deleteUserRole(UserRole userRole) {
+		userRoleHome.delete(userRole);
+	}
+	
+	public void deleteUser(User user) {
+		userHome.delete(user);
+	}
+	
+	public UserRole getUserRoleById(Integer id) {
+		return userRoleHome.findById(id);
+	}
+	
 }

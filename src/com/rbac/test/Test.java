@@ -38,10 +38,10 @@ public class Test {
 		Test test = new Test();
 
 		Scanner scan = new Scanner(System.in);
-		
+
 		System.out.println("Please login");
 		System.out.println();
-		
+
 		do {
 
 			System.out.print("Enter username : ");
@@ -80,7 +80,9 @@ public class Test {
 
 			} else if ("2".equals(input)) {
 				// Create File
-
+				
+				// Add in resource table
+				
 				// Check permissions - By default any user can create resource
 
 			} else if ("3".equals(input)) {
@@ -290,8 +292,44 @@ public class Test {
 
 				} else if ("7".equals(input)) {
 					// Delete User
+					try {
+						List<User> users = test.userController.getAllUser();
 
-				} else if ("8".equals(input)) {
+						for (User user : users) {
+							System.out.println(user.toString());
+						}
+
+						System.out.println();
+						System.out.println("Select one of the users");
+						String selectedUserOpt = scan.nextLine();
+
+						Integer selectedUserInt = Integer.parseInt(selectedUserOpt);
+
+						User myUser = test.userController.getUserById(selectedUserInt);
+
+						if (myUser == null) {
+							throw new Exception();
+						}
+
+						// Get User's roles
+
+						UserRole userRole = new UserRole();
+
+						userRole.setUser(myUser);
+
+						List<UserRole> userRoles = test.userController.getUserRoles(userRole);
+
+						for (UserRole myUserRole : userRoles) {
+							test.userController.deleteUserRole(myUserRole);
+						}
+
+						test.userController.deleteUser(myUser);
+
+					} catch (Exception e) {
+						System.out.println("Invalid selection");
+					}
+
+				} /*else if ("8".equals(input)) {
 					// Create Role
 
 					System.out.println();
@@ -306,7 +344,8 @@ public class Test {
 
 				} else if ("9".equals(input)) {
 					// Delete Role
-				} else if ("10".equals(input)) {
+
+				}*/ else if ("10".equals(input)) {
 					// Create User Role
 
 					List<User> allUsers = test.userController.getAllUser();
@@ -338,46 +377,172 @@ public class Test {
 
 						Integer selectedRole = Integer.parseInt(selectedRoleOpt);
 
-						if (selectedRole > allRoles.size()) {
+						/*
+						 * if (selectedRole > allRoles.size()) { throw new
+						 * Exception(); }
+						 */
+
+						Role role = test.roleController.getRoleById(selectedRole);
+
+						User myUser = test.userController.getUserById(selectedUser);
+
+						if (role == null || myUser == null) {
 							throw new Exception();
 						}
 
-						// Assign role
+						// Assign user role
 
 						UserRole userRole = new UserRole();
 
 						userRole.setStatus(Boolean.TRUE);
-						userRole.setRole(test.roleController.getRoleById(selectedRole));
-						userRole.setUser(test.userController.getUserById(selectedUser));
+						userRole.setRole(role);
+						userRole.setUser(myUser);
 
 						test.userController.assignUserRole(userRole);
 
 					} catch (Exception e) {
 						System.out.println("Invalid selection");
-						continue;
 					}
 
 				} else if ("11".equals(input)) {
 					// Delete User Role
+
+					try {
+						List<UserRole> userRoles = test.userController.getAllUserRoles();
+
+						for (UserRole userRole : userRoles) {
+							System.out.println(userRole.toString());
+						}
+
+						System.out.println();
+						System.out.println("Select one of the user-roles");
+						String selectedUserRoleOpt = scan.nextLine();
+
+						Integer selectedUserRole = Integer.parseInt(selectedUserRoleOpt);
+
+						UserRole userRole = test.userController.getUserRoleById(selectedUserRole);
+
+						if (userRole == null) {
+							throw new Exception();
+						}
+
+						test.userController.deleteUserRole(userRole);
+
+					} catch (Exception e) {
+						System.out.println("Invalid selection");
+					}
+
 				} else if ("12".equals(input)) {
 					// Create Permission
+					try {
+						System.out.println();
+						/*
+						 * System.out.println("1) " +
+						 * Constants.ACCESS_TYPE_CREATE); System.out.println(
+						 * "2) " + Constants.ACCESS_TYPE_DELETE);
+						 * System.out.println("3) " +
+						 * Constants.ACCESS_TYPE_UPDATE); System.out.println(
+						 * "4) " + Constants.ACCESS_TYPE_VIEW);
+						 * System.out.println("5) " +
+						 * Constants.ACCESS_TYPE_CREATE_SCHEDULE);
+						 * System.out.println("6) " +
+						 * Constants.ACCESS_TYPE_DELETE_SCHEDULE);
+						 * System.out.println("7) " +
+						 * Constants.ACCESS_TYPE_UPDATE_SCHEDULE);
+						 * System.out.println("8) " +
+						 * Constants.ACCESS_TYPE_VIEW_SCHEDULE);
+						 */
 
-					// Select assign type
+						List<AcessType> acessTypes = test.permissionController.getAllAcessTypes();
+
+						for (AcessType acessType : acessTypes) {
+							System.out.println(acessType.toString());
+						}
+
+						System.out.println();
+						System.out.println("Select one of the access types");
+						String selectedAcessTypeOpt = scan.nextLine();
+
+						Integer selectedAcessTypeInt = Integer.parseInt(selectedAcessTypeOpt);
+
+						AcessType acessType = test.permissionController.getAcessTypeById(selectedAcessTypeInt);
+
+						if (acessType == null) {
+							throw new Exception();
+						}
+
+						List<Resource> resources = test.permissionController.getAllResources();
+
+						for (Resource resource : resources) {
+							System.out.println(resource.toString());
+						}
+
+						System.out.println();
+						System.out.println("Select one of the resources");
+						String selectedResourceOpt = scan.nextLine();
+
+						Integer selectedResourceInt = Integer.parseInt(selectedResourceOpt);
+
+						Resource resource = test.permissionController.getResourceById(selectedResourceInt);
+
+						if (resource == null) {
+							throw new Exception();
+						}
+
+						Permission permission = new Permission();
+
+						permission.setAccesstypeid(acessType.getId());
+						permission.setResourceid(resource.getId());
+
+						test.permissionController.savePermission(permission);
+
+					} catch (Exception e) {
+						System.out.println("Invalid selection");
+					}
 
 				} else if ("13".equals(input)) {
 					// Delete Permission
-				} else if ("14".equals(input)) {
-					// Create Role Permission
+
+					List<Permission> allPermissions = test.permissionController.getAllPermissions();
+
+					for (Permission permission : allPermissions) {
+
+						AcessType acessType = test.permissionController.getAcessTypeById(permission.getId());
+						Resource resource = test.permissionController.getResourceById(permission.getResourceid());
+
+						System.out.println(permission.getId() + ") Can " + acessType.getName() + " " + resource.getName());
+
+					}
 
 					System.out.println();
-					System.out.println("1) " + Constants.ACCESS_TYPE_CREATE);
-					System.out.println("2) " + Constants.ACCESS_TYPE_DELETE);
-					System.out.println("3) " + Constants.ACCESS_TYPE_UPDATE);
-					System.out.println("4) " + Constants.ACCESS_TYPE_VIEW);
-					System.out.println("5) " + Constants.ACCESS_TYPE_CREATE_SCHEDULE);
-					System.out.println("6) " + Constants.ACCESS_TYPE_DELETE_SCHEDULE);
-					System.out.println("7) " + Constants.ACCESS_TYPE_UPDATE_SCHEDULE);
-					System.out.println("8) " + Constants.ACCESS_TYPE_VIEW_SCHEDULE);
+					System.out.println("Select one of the permissions");
+					String selectedPermissionOpt = scan.nextLine();
+
+					Integer selectedPermissionInt = Integer.parseInt(selectedPermissionOpt);
+
+					Permission selectedPermission = test.permissionController.getPermissionById(selectedPermissionInt);
+
+					if (selectedPermission == null) {
+						System.out.println("Invalid selection");
+						continue;
+					}
+
+					// Delete Role Permission
+
+					RolePermission rolePermission = new RolePermission();
+
+					rolePermission.setPermission(selectedPermission);
+
+					List<RolePermission> rolePermissions = test.roleController.getRolePermissoins(rolePermission);
+
+					for (RolePermission myRolePermission : rolePermissions) {
+						test.roleController.deleteRolePermission(myRolePermission);
+					}
+
+					test.permissionController.deletePermission(selectedPermission);
+
+				} else if ("14".equals(input)) {
+					// Create Role Permission
 
 					// Select role
 
@@ -394,36 +559,82 @@ public class Test {
 
 						Integer selectedRole = Integer.parseInt(selectedRoleOpt);
 
-						if (selectedRole > allRoles.size()) {
+						Role role = test.roleController.getRoleById(selectedRole);
+
+						if (role == null) {
 							throw new Exception();
 						}
 
 						List<Permission> allPermissions = test.permissionController.getAllPermissions();
 
 						for (Permission permission : allPermissions) {
-							// TODO: Do it in a better way
+
+							AcessType acessType = test.permissionController.getAcessTypeById(permission.getId());
+							Resource resource = test.permissionController.getResourceById(permission.getResourceid());
+
+							System.out.println(permission.getId() + ") Can " + acessType.getName() + " " + resource.getName());
+
 						}
 
 						System.out.println();
-						System.out.println("Select one of the roles");
-						String selectedAccessTypeOpt = scan.nextLine();
+						System.out.println("Select one of the permissions");
+						String selectedPermissionOpt = scan.nextLine();
 
-						Integer selectedAccessType = Integer.parseInt(selectedAccessTypeOpt);
+						Integer selectedPermissionInt = Integer.parseInt(selectedPermissionOpt);
 
-						if (selectedRole > 8) {
+						Permission selectedPermission = test.permissionController.getPermissionById(selectedPermissionInt);
+
+						if (selectedPermission == null) {
 							throw new Exception();
 						}
 
-						/*RolePermission newRolePermission = new RolePermission();
+						RolePermission rolePermission = new RolePermission();
 
-						newRolePermission.setPermission(permission);*/
+						rolePermission.setPermission(selectedPermission);
+						rolePermission.setRole(role);
+						rolePermission.setStatus(Boolean.TRUE);
+
+						test.roleController.saveRolePermission(rolePermission);
 
 					} catch (Exception e) {
 						System.out.println("Invalid selection");
-						continue;
 					}
 				} else if ("15".equals(input)) {
 					// Delete Role Permission
+
+					try {
+
+						List<RolePermission> rolePermissions = test.roleController.getAllRolePermissoins();
+
+						for (RolePermission rolePermission : rolePermissions) {
+
+							Permission permission = rolePermission.getPermission();
+
+							AcessType acessType = test.permissionController.getAcessTypeById(permission.getId());
+							Resource resource = test.permissionController.getResourceById(permission.getResourceid());
+
+							System.out.println(rolePermission.getId() + ") Role " + rolePermission.getRole().getName() + " can " + permission.getId()
+									+ ") Can " + acessType.getName() + " " + resource.getName());
+						}
+
+						System.out.println();
+						System.out.println("Select one of the role-permissions");
+						String selectedRolePermissionOpt = scan.nextLine();
+
+						Integer selectedRolePermissionInt = Integer.parseInt(selectedRolePermissionOpt);
+
+						RolePermission rolePermission = test.roleController.getRolePermissionById(selectedRolePermissionInt);
+
+						if (rolePermission == null) {
+							throw new Exception();
+						}
+
+						test.roleController.deleteRolePermission(rolePermission);
+
+					} catch (Exception e) {
+						System.out.println("Invalid selection");
+					}
+
 				} else {
 					System.out.println("Invalid Option");
 				}
@@ -439,12 +650,15 @@ public class Test {
 		System.out.println();
 		System.out.println("Choose one of following options");
 		System.out.println();
-		System.out.println("1) List Files");
-		System.out.println("2) Create File");
-		System.out.println("3) View File");
-		System.out.println("4) Update File");
-		System.out.println("5) Delete File");
-
+		
+		if (Boolean.FALSE.equals(isAdmin)) {
+			System.out.println("1) List Files");
+			System.out.println("2) Create File");
+			System.out.println("3) View File");
+			System.out.println("4) Update File");
+			System.out.println("5) Delete File");
+		}
+		
 		// Print Doctor Menu
 		if (Boolean.TRUE.equals(isDoctor)) {
 			System.out.println("6) View Schedule");
@@ -457,12 +671,12 @@ public class Test {
 		if (Boolean.TRUE.equals(isAdmin)) {
 			System.out.println("6) Create User");
 			System.out.println("7) Delete User");
-			System.out.println("10) Create User Role");
-			System.out.println("11) Delete User Role");
-			System.out.println("12) Create Permission");
-			System.out.println("13) Delete Permission");
-			System.out.println("14) Create Role Permission");
-			System.out.println("15) Delete Role Permission");
+			System.out.println("8) Create User Role");
+			System.out.println("9) Delete User Role");
+			System.out.println("10) Create Permission");
+			System.out.println("11) Delete Permission");
+			System.out.println("12) Create Role Permission");
+			System.out.println("13) Delete Role Permission");
 		}
 
 		System.out.println();
