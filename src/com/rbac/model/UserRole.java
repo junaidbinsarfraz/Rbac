@@ -54,7 +54,7 @@ public class UserRole implements java.io.Serializable {
 	
 	@Override
 	public String toString() {
-		return id + ") " + user != null ? "User : " + user.getName() + " " : "" + role != null ? "Has Role : " + role.getName() : "";
+		return id + ") " + (user != null ? "User : " + user.getName() + " " : "") + (role != null ? "Has Role : " + role.getName() : "");
 	}
 
 }

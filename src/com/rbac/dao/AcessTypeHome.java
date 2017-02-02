@@ -1,16 +1,17 @@
 package com.rbac.dao;
 // Generated Jan 30, 2017 10:05:45 AM by Hibernate Tools 4.3.1.Final
 
+import static org.hibernate.criterion.Example.create;
+
 import java.util.List;
-import javax.naming.InitialContext;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.LockMode;
 import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
 
 import com.rbac.model.AcessType;
-
-import static org.hibernate.criterion.Example.create;
 
 /**
  * Home object for domain model class AcessType.
@@ -24,17 +25,26 @@ public class AcessTypeHome {
 
 	protected SessionFactory getSessionFactory() {
 		try {
-			return (SessionFactory) new InitialContext().lookup("SessionFactory");
-		} catch (Exception e) {
-			log.error("Could not locate SessionFactory in JNDI", e);
-			throw new IllegalStateException("Could not locate SessionFactory in JNDI");
-		}
+
+            SessionFactory sessionFactory = new Configuration().configure(
+                    "hibernate.cfg.xml")
+                    .buildSessionFactory();
+
+            return sessionFactory;
+
+        } catch (Exception e) {
+
+            log.error("Initial SessionFactory creation failed." + e);
+            throw new IllegalStateException("Initial Session Factory creation failed.");
+        }
 	}
 
 	public void persist(AcessType transientInstance) {
 		log.debug("persisting AcessType instance");
 		try {
+			sessionFactory.getCurrentSession().beginTransaction();
 			sessionFactory.getCurrentSession().persist(transientInstance);
+			sessionFactory.getCurrentSession().getTransaction().commit();
 			log.debug("persist successful");
 		} catch (RuntimeException re) {
 			log.error("persist failed", re);
@@ -45,7 +55,9 @@ public class AcessTypeHome {
 	public void attachDirty(AcessType instance) {
 		log.debug("attaching dirty AcessType instance");
 		try {
+			sessionFactory.getCurrentSession().beginTransaction();
 			sessionFactory.getCurrentSession().saveOrUpdate(instance);
+			sessionFactory.getCurrentSession().getTransaction().commit();
 			log.debug("attach successful");
 		} catch (RuntimeException re) {
 			log.error("attach failed", re);
@@ -56,7 +68,9 @@ public class AcessTypeHome {
 	public void attachClean(AcessType instance) {
 		log.debug("attaching clean AcessType instance");
 		try {
+			sessionFactory.getCurrentSession().beginTransaction();
 			sessionFactory.getCurrentSession().lock(instance, LockMode.NONE);
+			sessionFactory.getCurrentSession().getTransaction().commit();
 			log.debug("attach successful");
 		} catch (RuntimeException re) {
 			log.error("attach failed", re);
@@ -67,7 +81,9 @@ public class AcessTypeHome {
 	public void delete(AcessType persistentInstance) {
 		log.debug("deleting AcessType instance");
 		try {
+			sessionFactory.getCurrentSession().beginTransaction();
 			sessionFactory.getCurrentSession().delete(persistentInstance);
+			sessionFactory.getCurrentSession().getTransaction().commit();
 			log.debug("delete successful");
 		} catch (RuntimeException re) {
 			log.error("delete failed", re);
@@ -78,7 +94,9 @@ public class AcessTypeHome {
 	public AcessType merge(AcessType detachedInstance) {
 		log.debug("merging AcessType instance");
 		try {
+			sessionFactory.getCurrentSession().beginTransaction();
 			AcessType result = (AcessType) sessionFactory.getCurrentSession().merge(detachedInstance);
+			sessionFactory.getCurrentSession().getTransaction().commit();
 			log.debug("merge successful");
 			return result;
 		} catch (RuntimeException re) {
@@ -90,6 +108,7 @@ public class AcessTypeHome {
 	public AcessType findById(java.lang.Integer id) {
 		log.debug("getting AcessType instance with id: " + id);
 		try {
+			sessionFactory.getCurrentSession().beginTransaction();
 			AcessType instance = (AcessType) sessionFactory.getCurrentSession().get("com.rbac.model.AcessType", id);
 			if (instance == null) {
 				log.debug("get successful, no instance found");
@@ -106,6 +125,7 @@ public class AcessTypeHome {
 	public List<AcessType> findByExample(AcessType instance) {
 		log.debug("finding AcessType instance by example");
 		try {
+			sessionFactory.getCurrentSession().beginTransaction();
 			List<AcessType> results = (List<AcessType>) sessionFactory.getCurrentSession().createCriteria("com.rbac.model.AcessType")
 					.add(create(instance)).list();
 			log.debug("find by example successful, result size: " + results.size());
@@ -121,6 +141,7 @@ public class AcessTypeHome {
 	public List<AcessType> getAllAcessTypes() {
 		log.debug("get all AcessTypes");
 		try {
+			sessionFactory.getCurrentSession().beginTransaction();
 			List<AcessType> results = (List<AcessType>) sessionFactory.getCurrentSession().createCriteria("com.rbac.model.AcessType").list();
 			log.debug("get all AcessTypes successful, result size: " + results.size());
 			return results;

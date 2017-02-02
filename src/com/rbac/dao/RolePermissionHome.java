@@ -7,6 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.LockMode;
 import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
 
 import com.rbac.model.RolePermission;
 
@@ -24,17 +25,26 @@ public class RolePermissionHome {
 
 	protected SessionFactory getSessionFactory() {
 		try {
-			return (SessionFactory) new InitialContext().lookup("SessionFactory");
-		} catch (Exception e) {
-			log.error("Could not locate SessionFactory in JNDI", e);
-			throw new IllegalStateException("Could not locate SessionFactory in JNDI");
-		}
+
+            SessionFactory sessionFactory = new Configuration().configure(
+                    "hibernate.cfg.xml")
+                    .buildSessionFactory();
+
+            return sessionFactory;
+
+        } catch (Exception e) {
+
+            log.error("Initial SessionFactory creation failed." + e);
+            throw new IllegalStateException("Initial Session Factory creation failed.");
+        }
 	}
 
 	public void persist(RolePermission transientInstance) {
 		log.debug("persisting RolePermission instance");
 		try {
+			sessionFactory.getCurrentSession().beginTransaction();
 			sessionFactory.getCurrentSession().persist(transientInstance);
+			sessionFactory.getCurrentSession().getTransaction().commit();
 			log.debug("persist successful");
 		} catch (RuntimeException re) {
 			log.error("persist failed", re);
@@ -45,7 +55,9 @@ public class RolePermissionHome {
 	public void attachDirty(RolePermission instance) {
 		log.debug("attaching dirty RolePermission instance");
 		try {
+			sessionFactory.getCurrentSession().beginTransaction();
 			sessionFactory.getCurrentSession().saveOrUpdate(instance);
+			sessionFactory.getCurrentSession().getTransaction().commit();
 			log.debug("attach successful");
 		} catch (RuntimeException re) {
 			log.error("attach failed", re);
@@ -56,7 +68,9 @@ public class RolePermissionHome {
 	public void attachClean(RolePermission instance) {
 		log.debug("attaching clean RolePermission instance");
 		try {
+			sessionFactory.getCurrentSession().beginTransaction();
 			sessionFactory.getCurrentSession().lock(instance, LockMode.NONE);
+			sessionFactory.getCurrentSession().getTransaction().commit();
 			log.debug("attach successful");
 		} catch (RuntimeException re) {
 			log.error("attach failed", re);
@@ -67,7 +81,9 @@ public class RolePermissionHome {
 	public void delete(RolePermission persistentInstance) {
 		log.debug("deleting RolePermission instance");
 		try {
+			sessionFactory.getCurrentSession().beginTransaction();
 			sessionFactory.getCurrentSession().delete(persistentInstance);
+			sessionFactory.getCurrentSession().getTransaction().commit();
 			log.debug("delete successful");
 		} catch (RuntimeException re) {
 			log.error("delete failed", re);
@@ -78,7 +94,9 @@ public class RolePermissionHome {
 	public RolePermission merge(RolePermission detachedInstance) {
 		log.debug("merging RolePermission instance");
 		try {
+			sessionFactory.getCurrentSession().beginTransaction();
 			RolePermission result = (RolePermission) sessionFactory.getCurrentSession().merge(detachedInstance);
+			sessionFactory.getCurrentSession().getTransaction().commit();
 			log.debug("merge successful");
 			return result;
 		} catch (RuntimeException re) {
@@ -90,6 +108,7 @@ public class RolePermissionHome {
 	public RolePermission findById(java.lang.Integer id) {
 		log.debug("getting RolePermission instance with id: " + id);
 		try {
+			sessionFactory.getCurrentSession().beginTransaction();
 			RolePermission instance = (RolePermission) sessionFactory.getCurrentSession().get("com.rbac.model.RolePermission", id);
 			if (instance == null) {
 				log.debug("get successful, no instance found");
@@ -106,6 +125,7 @@ public class RolePermissionHome {
 	public List<RolePermission> findByExample(RolePermission instance) {
 		log.debug("finding RolePermission instance by example");
 		try {
+			sessionFactory.getCurrentSession().beginTransaction();
 			List<RolePermission> results = (List<RolePermission>) sessionFactory.getCurrentSession().createCriteria("com.rbac.model.RolePermission")
 					.add(create(instance)).list();
 			log.debug("find by example successful, result size: " + results.size());
@@ -119,6 +139,7 @@ public class RolePermissionHome {
 	public List<RolePermission> getAllRolePermission() {
 		log.debug("get all Role Permission");
 		try {
+			sessionFactory.getCurrentSession().beginTransaction();
 			List<RolePermission> results = (List<RolePermission>) sessionFactory.getCurrentSession().createCriteria("com.rbac.model.RolePermission").list();
 			log.debug("get all Role Permission successful, result size: " + results.size());
 			return results;

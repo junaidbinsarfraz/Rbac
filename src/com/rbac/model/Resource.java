@@ -51,5 +51,10 @@ public class Resource implements java.io.Serializable {
 	public void setStatus(Boolean status) {
 		this.status = status;
 	}
+	
+	@Override
+	public String toString() {
+		return id + ") " + name;
+	}
 
 }

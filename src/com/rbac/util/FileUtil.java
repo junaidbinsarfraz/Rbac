@@ -149,7 +149,7 @@ public class FileUtil {
 		
 		try {
 			
-			File currentDirectory = new File(new File(".").getAbsolutePath());
+			File currentDirectory = new File(new File(Constants.FILE_DIRECTORY).getAbsolutePath());
 			/*System.out.println(currentDirectory.getCanonicalPath());
 			System.out.println(currentDirectory.getAbsolutePath());*/
 			

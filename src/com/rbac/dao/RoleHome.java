@@ -7,6 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.LockMode;
 import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
 
 import com.rbac.model.Role;
 
@@ -24,17 +25,26 @@ public class RoleHome {
 
 	protected SessionFactory getSessionFactory() {
 		try {
-			return (SessionFactory) new InitialContext().lookup("SessionFactory");
-		} catch (Exception e) {
-			log.error("Could not locate SessionFactory in JNDI", e);
-			throw new IllegalStateException("Could not locate SessionFactory in JNDI");
-		}
+
+            SessionFactory sessionFactory = new Configuration().configure(
+                    "hibernate.cfg.xml")
+                    .buildSessionFactory();
+
+            return sessionFactory;
+
+        } catch (Exception e) {
+
+            log.error("Initial SessionFactory creation failed." + e);
+            throw new IllegalStateException("Initial Session Factory creation failed.");
+        }
 	}
 
 	public void persist(Role transientInstance) {
 		log.debug("persisting Role instance");
 		try {
+			sessionFactory.getCurrentSession().beginTransaction();
 			sessionFactory.getCurrentSession().persist(transientInstance);
+			sessionFactory.getCurrentSession().getTransaction().commit();
 			log.debug("persist successful");
 		} catch (RuntimeException re) {
 			log.error("persist failed", re);
@@ -45,7 +55,9 @@ public class RoleHome {
 	public void attachDirty(Role instance) {
 		log.debug("attaching dirty Role instance");
 		try {
+			sessionFactory.getCurrentSession().beginTransaction();
 			sessionFactory.getCurrentSession().saveOrUpdate(instance);
+			sessionFactory.getCurrentSession().getTransaction().commit();
 			log.debug("attach successful");
 		} catch (RuntimeException re) {
 			log.error("attach failed", re);
@@ -56,7 +68,9 @@ public class RoleHome {
 	public void attachClean(Role instance) {
 		log.debug("attaching clean Role instance");
 		try {
+			sessionFactory.getCurrentSession().beginTransaction();
 			sessionFactory.getCurrentSession().lock(instance, LockMode.NONE);
+			sessionFactory.getCurrentSession().getTransaction().commit();
 			log.debug("attach successful");
 		} catch (RuntimeException re) {
 			log.error("attach failed", re);
@@ -67,7 +81,9 @@ public class RoleHome {
 	public void delete(Role persistentInstance) {
 		log.debug("deleting Role instance");
 		try {
+			sessionFactory.getCurrentSession().beginTransaction();
 			sessionFactory.getCurrentSession().delete(persistentInstance);
+			sessionFactory.getCurrentSession().getTransaction().commit();
 			log.debug("delete successful");
 		} catch (RuntimeException re) {
 			log.error("delete failed", re);
@@ -78,7 +94,9 @@ public class RoleHome {
 	public Role merge(Role detachedInstance) {
 		log.debug("merging Role instance");
 		try {
+			sessionFactory.getCurrentSession().beginTransaction();
 			Role result = (Role) sessionFactory.getCurrentSession().merge(detachedInstance);
+			sessionFactory.getCurrentSession().getTransaction().commit();
 			log.debug("merge successful");
 			return result;
 		} catch (RuntimeException re) {
@@ -90,6 +108,7 @@ public class RoleHome {
 	public Role findById(java.lang.Integer id) {
 		log.debug("getting Role instance with id: " + id);
 		try {
+			sessionFactory.getCurrentSession().beginTransaction();
 			Role instance = (Role) sessionFactory.getCurrentSession().get("com.rbac.model.Role", id);
 			if (instance == null) {
 				log.debug("get successful, no instance found");
@@ -106,6 +125,7 @@ public class RoleHome {
 	public List<Role> findByExample(Role instance) {
 		log.debug("finding Role instance by example");
 		try {
+			sessionFactory.getCurrentSession().beginTransaction();
 			List<Role> results = (List<Role>) sessionFactory.getCurrentSession().createCriteria("com.rbac.model.Role").add(create(instance)).list();
 			log.debug("find by example successful, result size: " + results.size());
 			return results;
@@ -118,6 +138,7 @@ public class RoleHome {
 	public List<Role> getAllRoles() {
 		log.debug("get all roles by example");
 		try {
+			sessionFactory.getCurrentSession().beginTransaction();
 			List<Role> results = (List<Role>) sessionFactory.getCurrentSession().createCriteria("com.rbac.model.Role").list();
 			log.debug("get all roles successful, result size: " + results.size());
 			return results;
