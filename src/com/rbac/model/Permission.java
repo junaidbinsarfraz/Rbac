@@ -64,5 +64,20 @@ public class Permission implements java.io.Serializable {
 	public void setRolePermissions(List<RolePermission> rolePermissions) {
 		this.rolePermissions = rolePermissions;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+	    if (obj == null) {
+	        return false;
+	    }
+	    if (!Permission.class.isAssignableFrom(obj.getClass())) {
+	        return false;
+	    }
+	    final Permission other = (Permission) obj;
+	    if ((this.id == null) ? (other.id != null) : !this.id.equals(other.id)) {
+	        return false;
+	    }
+	    return true;
+	}
 
 }

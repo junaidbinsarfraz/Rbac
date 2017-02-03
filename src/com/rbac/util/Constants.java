@@ -15,6 +15,6 @@ public interface Constants {
 	String ACCESS_TYPE_DELETE_SCHEDULE = "Delete Schedule";
 	String ACCESS_TYPE_VIEW_SCHEDULE = "View Schedule";
 	
-	String FILE_DIRECTORY = "";
+	String FILE_DIRECTORY = "D:\\Junaid\\Github\\Rbac\\hospitalresources\\";
 	
 }

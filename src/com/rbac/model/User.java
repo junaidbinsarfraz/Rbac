@@ -70,5 +70,20 @@ public class User implements java.io.Serializable {
 	public String toString() {
 		return id + ") " + name;
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+	    if (obj == null) {
+	        return false;
+	    }
+	    if (!User.class.isAssignableFrom(obj.getClass())) {
+	        return false;
+	    }
+	    final User other = (User) obj;
+	    if ((this.id == null) ? (other.id != null) : !this.id.equals(other.id)) {
+	        return false;
+	    }
+	    return true;
+	}
 
 }

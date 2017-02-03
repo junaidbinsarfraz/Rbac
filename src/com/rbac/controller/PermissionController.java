@@ -114,4 +114,8 @@ public class PermissionController {
 		return resourceHome.findByExample(resource);
 	}
 	
+	public void deleteResource(Resource resource) {
+		resourceHome.delete(resource);
+	}
+	
 }

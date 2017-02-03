@@ -17,7 +17,7 @@
         <property name="status" type="java.lang.Boolean">
             <column name="status" />
         </property>
-        <bag name="rolePermissions" table="role_permission" inverse="true" lazy="true" fetch="select">
+        <bag name="rolePermissions" table="role_permission" inverse="true" lazy="false" fetch="select">
             <key>
                 <column name="permissionid" />
             </key>

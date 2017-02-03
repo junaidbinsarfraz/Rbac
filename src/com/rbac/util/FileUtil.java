@@ -137,7 +137,7 @@ public class FileUtil {
 	
 	public static Boolean deleteFile(String fileName) {
 		
-		File file = new File(fileName);
+		File file = new File(Constants.FILE_DIRECTORY + fileName);
 		
 		return file.delete();
 	}
@@ -149,7 +149,7 @@ public class FileUtil {
 		
 		try {
 			
-			File currentDirectory = new File(new File(".").getAbsolutePath());
+			File currentDirectory = new File(new File(Constants.FILE_DIRECTORY).getAbsolutePath());
 			/*System.out.println(currentDirectory.getCanonicalPath());
 			System.out.println(currentDirectory.getAbsolutePath());*/
 			

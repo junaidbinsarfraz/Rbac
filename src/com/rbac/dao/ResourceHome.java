@@ -7,6 +7,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.LockMode;
 import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
 
 import com.rbac.model.Resource;
 
@@ -24,17 +25,26 @@ public class ResourceHome {
 
 	protected SessionFactory getSessionFactory() {
 		try {
-			return (SessionFactory) new InitialContext().lookup("SessionFactory");
-		} catch (Exception e) {
-			log.error("Could not locate SessionFactory in JNDI", e);
-			throw new IllegalStateException("Could not locate SessionFactory in JNDI");
-		}
+
+            SessionFactory sessionFactory = new Configuration().configure(
+                    "hibernate.cfg.xml")
+                    .buildSessionFactory();
+
+            return sessionFactory;
+
+        } catch (Exception e) {
+
+            log.error("Initial SessionFactory creation failed." + e);
+            throw new IllegalStateException("Initial Session Factory creation failed.");
+        }
 	}
 
 	public void persist(Resource transientInstance) {
 		log.debug("persisting Resource instance");
 		try {
+			sessionFactory.getCurrentSession().beginTransaction();
 			sessionFactory.getCurrentSession().persist(transientInstance);
+			sessionFactory.getCurrentSession().getTransaction().commit();
 			log.debug("persist successful");
 		} catch (RuntimeException re) {
 			log.error("persist failed", re);
@@ -45,7 +55,9 @@ public class ResourceHome {
 	public void attachDirty(Resource instance) {
 		log.debug("attaching dirty Resource instance");
 		try {
+			sessionFactory.getCurrentSession().beginTransaction();
 			sessionFactory.getCurrentSession().saveOrUpdate(instance);
+			sessionFactory.getCurrentSession().getTransaction().commit();
 			log.debug("attach successful");
 		} catch (RuntimeException re) {
 			log.error("attach failed", re);
@@ -56,7 +68,9 @@ public class ResourceHome {
 	public void attachClean(Resource instance) {
 		log.debug("attaching clean Resource instance");
 		try {
+			sessionFactory.getCurrentSession().beginTransaction();
 			sessionFactory.getCurrentSession().lock(instance, LockMode.NONE);
+			sessionFactory.getCurrentSession().getTransaction().commit();
 			log.debug("attach successful");
 		} catch (RuntimeException re) {
 			log.error("attach failed", re);
@@ -67,7 +81,9 @@ public class ResourceHome {
 	public void delete(Resource persistentInstance) {
 		log.debug("deleting Resource instance");
 		try {
+			sessionFactory.getCurrentSession().beginTransaction();
 			sessionFactory.getCurrentSession().delete(persistentInstance);
+			sessionFactory.getCurrentSession().getTransaction().commit();
 			log.debug("delete successful");
 		} catch (RuntimeException re) {
 			log.error("delete failed", re);
@@ -78,7 +94,9 @@ public class ResourceHome {
 	public Resource merge(Resource detachedInstance) {
 		log.debug("merging Resource instance");
 		try {
+			sessionFactory.getCurrentSession().beginTransaction();
 			Resource result = (Resource) sessionFactory.getCurrentSession().merge(detachedInstance);
+			sessionFactory.getCurrentSession().getTransaction().commit();
 			log.debug("merge successful");
 			return result;
 		} catch (RuntimeException re) {
@@ -90,6 +108,7 @@ public class ResourceHome {
 	public Resource findById(java.lang.Integer id) {
 		log.debug("getting Resource instance with id: " + id);
 		try {
+			sessionFactory.getCurrentSession().beginTransaction();
 			Resource instance = (Resource) sessionFactory.getCurrentSession().get("com.rbac.model.Resource", id);
 			if (instance == null) {
 				log.debug("get successful, no instance found");
@@ -106,6 +125,7 @@ public class ResourceHome {
 	public List<Resource> findByExample(Resource instance) {
 		log.debug("finding Resource instance by example");
 		try {
+			sessionFactory.getCurrentSession().beginTransaction();
 			List<Resource> results = (List<Resource>) sessionFactory.getCurrentSession().createCriteria("com.rbac.model.Resource")
 					.add(create(instance)).list();
 			log.debug("find by example successful, result size: " + results.size());
@@ -119,6 +139,7 @@ public class ResourceHome {
 	public List<Resource> getAllResources() {
 		log.debug("get all resource");
 		try {
+			sessionFactory.getCurrentSession().beginTransaction();
 			List<Resource> results = (List<Resource>) sessionFactory.getCurrentSession().createCriteria("com.rbac.model.Resource").list();
 			log.debug("get all resource successful, result size: " + results.size());
 			return results;

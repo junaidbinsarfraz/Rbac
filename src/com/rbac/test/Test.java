@@ -59,7 +59,7 @@ public class Test {
 				isDoctor = Boolean.TRUE;
 				break;
 			} else if (Constants.ROLE_ADMIN.equals(userRole.getRole().getName())) {
-				isDoctor = Boolean.TRUE;
+				isAdmin = Boolean.TRUE;
 				break;
 			}
 		}
@@ -70,153 +70,70 @@ public class Test {
 
 			String input = scan.nextLine();
 
-			if ("1".equals(input)) {
-				// List Files
+			if (Boolean.FALSE.equals(isAdmin)) {
 
-				List<String> files = FileUtil.listFiles();
+				if ("1".equals(input)) {
+					// List Files
 
-				for (String fileName : files) {
-					System.out.println(fileName);
-				}
+					List<String> files = FileUtil.listFiles();
 
-			} else if ("2".equals(input)) {
-				// Create File
-				
-				// Add in resource table
-				System.out.print("Enter file name : ");
-				String fileName = scan.nextLine();
-				
-				FileUtil.writeIntoFile(fileName, "");
-				
-				Resource resource = new Resource();
-				
-				resource.setName(fileName);
-				resource.setStatus(Boolean.TRUE);
-				
-				test.permissionController.saveResource(resource);
-				
-//				Permission permission = new Permission();
-				
-				resource = test.permissionController.getResources(resource) != null ? test.permissionController.getResources(resource).get(0) : null;
-				
-				if(resource == null) {
-					System.out.println("Unable to save resource");
-					continue;
-				}
-				
-				List<AcessType> acessTypes = test.permissionController.getAllAcessTypes();
-				
-				List<Permission> permissions = new ArrayList<Permission>();
-				
-				for(AcessType acessType : acessTypes) {
-					
-					if(!(Constants.ACCESS_TYPE_CREATE.equals(acessType.getName()) || Constants.ACCESS_TYPE_CREATE.equals(acessType.getName()) || 
-							Constants.ACCESS_TYPE_CREATE.equals(acessType.getName()) || Constants.ACCESS_TYPE_CREATE.equals(acessType.getName()))) {
+					for (String fileName : files) {
+						System.out.println(fileName);
+					}
+
+				} else if ("2".equals(input)) {
+					// Create File
+
+					// Add in resource table
+					System.out.print("Enter file name : ");
+					String fileName = scan.nextLine();
+
+					FileUtil.writeIntoFile(fileName, "");
+
+					Resource resource = new Resource();
+
+					resource.setName(fileName);
+					resource.setStatus(Boolean.TRUE);
+
+					test.permissionController.saveResource(resource);
+
+					// Permission permission = new Permission();
+
+					resource = test.permissionController.getResources(resource) != null ? test.permissionController.getResources(resource).get(0)
+							: null;
+
+					if (resource == null) {
+						System.out.println("Unable to save resource");
 						continue;
 					}
-					
-					Permission newPermission = new Permission();
-					
-					newPermission.setAccesstypeid(acessType.getId());
-					newPermission.setResourceid(resource.getId());
-					
-					permissions.add(newPermission);
-				}
-				
-				for(Permission newPermission : permissions) {
-					test.permissionController.savePermission(newPermission);
-				}
 
-			} else if ("3".equals(input)) {
-				// View File
+					List<AcessType> acessTypes = test.permissionController.getAllAcessTypes();
 
-				System.out.println();
-				System.out.print("Enter file name : ");
-				input = scan.nextLine();
+					List<Permission> permissions = new ArrayList<Permission>();
 
-				Resource resource = new Resource();
+					for (AcessType acessType : acessTypes) {
 
-				resource.setName(input);
+						if (!(Constants.ACCESS_TYPE_CREATE.equals(acessType.getName()) || Constants.ACCESS_TYPE_DELETE.equals(acessType.getName())
+								|| Constants.ACCESS_TYPE_UPDATE.equals(acessType.getName())
+								|| Constants.ACCESS_TYPE_VIEW.equals(acessType.getName()))) {
+							continue;
+						}
 
-				AcessType acessType = new AcessType();
+						Permission newPermission = new Permission();
 
-				acessType.setName(Constants.ACCESS_TYPE_VIEW);
+						newPermission.setAccesstypeid(acessType.getId());
+						newPermission.setResourceid(resource.getId());
+						newPermission.setStatus(Boolean.TRUE);
 
-				Boolean isPermitted = test.permissionController.isPermitted(test.user, resource, acessType);
-
-				if (Boolean.TRUE.equals(isPermitted)) {
-
-					String fileContent = FileUtil.readFile(input);
-
-					System.out.println(fileContent);
-
-				} else {
-					System.out.println("Not Permitted");
-				}
-
-			} else if ("4".equals(input)) {
-				// Update File
-
-				System.out.println();
-				System.out.print("Enter file name : ");
-				input = scan.nextLine();
-
-				Resource resource = new Resource();
-
-				resource.setName(input);
-
-				AcessType acessType = new AcessType();
-
-				acessType.setName(Constants.ACCESS_TYPE_UPDATE);
-
-				Boolean isPermitted = test.permissionController.isPermitted(test.user, resource, acessType);
-
-				if (Boolean.TRUE.equals(isPermitted)) {
-
-					String content = scan.nextLine();
-
-					FileUtil.appendIntoFile(input, content);
-
-					System.out.println("File Updated");
-
-				} else {
-					System.out.println("Not Permitted");
-				}
-
-			} else if ("5".equals(input)) {
-				// Delete File
-
-				System.out.println();
-				System.out.print("Enter file name : ");
-				input = scan.nextLine();
-
-				Resource resource = new Resource();
-
-				resource.setName(input);
-
-				AcessType acessType = new AcessType();
-
-				acessType.setName(Constants.ACCESS_TYPE_DELETE);
-
-				Boolean isPermitted = test.permissionController.isPermitted(test.user, resource, acessType);
-
-				if (Boolean.TRUE.equals(isPermitted)) {
-
-					if (Boolean.TRUE.equals(FileUtil.deleteFile(input))) {
-						// TODO: Delete permission
-						System.out.println("File Deleted");
-					} else {
-						System.out.println("Not able to delete file");
+						permissions.add(newPermission);
 					}
 
-				} else {
-					System.out.println("Not Permitted");
-				}
+					for (Permission newPermission : permissions) {
+						test.permissionController.savePermission(newPermission);
+					}
 
-			} else if (isDoctor) {
-
-				if ("6".equals(input)) {
-					// View Schedule
+				} else if ("3".equals(input)) {
+					// View File
 
 					System.out.println();
 					System.out.print("Enter file name : ");
@@ -228,7 +145,7 @@ public class Test {
 
 					AcessType acessType = new AcessType();
 
-					acessType.setName(Constants.ACCESS_TYPE_VIEW_SCHEDULE);
+					acessType.setName(Constants.ACCESS_TYPE_VIEW);
 
 					Boolean isPermitted = test.permissionController.isPermitted(test.user, resource, acessType);
 
@@ -242,56 +159,8 @@ public class Test {
 						System.out.println("Not Permitted");
 					}
 
-				} else if ("7".equals(input)) {
-					// Create Schedule
-					
-					// Add in resource table
-					System.out.print("Enter schedule file name : ");
-					String fileName = scan.nextLine();
-					
-					FileUtil.writeIntoFile(fileName, "");
-					
-					Resource resource = new Resource();
-					
-					resource.setName(fileName);
-					resource.setStatus(Boolean.TRUE);
-					
-					test.permissionController.saveResource(resource);
-					
-//					Permission permission = new Permission();
-					
-					resource = test.permissionController.getResources(resource) != null ? test.permissionController.getResources(resource).get(0) : null;
-					
-					if(resource == null) {
-						System.out.println("Unable to save resource");
-						continue;
-					}
-					
-					List<AcessType> acessTypes = test.permissionController.getAllAcessTypes();
-					
-					List<Permission> permissions = new ArrayList<Permission>();
-					
-					for(AcessType acessType : acessTypes) {
-						
-						if(Constants.ACCESS_TYPE_CREATE.equals(acessType.getName()) || Constants.ACCESS_TYPE_CREATE.equals(acessType.getName()) || 
-								Constants.ACCESS_TYPE_CREATE.equals(acessType.getName()) || Constants.ACCESS_TYPE_CREATE.equals(acessType.getName())) {
-							continue;
-						}
-						
-						Permission newPermission = new Permission();
-						
-						newPermission.setAccesstypeid(acessType.getId());
-						newPermission.setResourceid(resource.getId());
-						
-						permissions.add(newPermission);
-					}
-					
-					for(Permission newPermission : permissions) {
-						test.permissionController.savePermission(newPermission);
-					}
-					
-				} else if ("8".equals(input)) {
-					// Update Schedule
+				} else if ("4".equals(input)) {
+					// Update File
 
 					System.out.println();
 					System.out.print("Enter file name : ");
@@ -303,7 +172,7 @@ public class Test {
 
 					AcessType acessType = new AcessType();
 
-					acessType.setName(Constants.ACCESS_TYPE_UPDATE_SCHEDULE);
+					acessType.setName(Constants.ACCESS_TYPE_UPDATE);
 
 					Boolean isPermitted = test.permissionController.isPermitted(test.user, resource, acessType);
 
@@ -319,8 +188,8 @@ public class Test {
 						System.out.println("Not Permitted");
 					}
 
-				} else if ("9".equals(input)) {
-					// Delete Schedule
+				} else if ("5".equals(input)) {
+					// Delete File
 
 					System.out.println();
 					System.out.print("Enter file name : ");
@@ -339,7 +208,8 @@ public class Test {
 					if (Boolean.TRUE.equals(isPermitted)) {
 
 						if (Boolean.TRUE.equals(FileUtil.deleteFile(input))) {
-							// TODO: Delete permissions
+							test.deleteResource(resource);
+							
 							System.out.println("File Deleted");
 						} else {
 							System.out.println("Not able to delete file");
@@ -349,13 +219,153 @@ public class Test {
 						System.out.println("Not Permitted");
 					}
 
-				} else {
-					System.out.println("Invalid Option");
+				} else if (isDoctor) {
+
+					if ("6".equals(input)) {
+						// View Schedule
+
+						System.out.println();
+						System.out.print("Enter file name : ");
+						input = scan.nextLine();
+
+						Resource resource = new Resource();
+
+						resource.setName(input);
+
+						AcessType acessType = new AcessType();
+
+						acessType.setName(Constants.ACCESS_TYPE_VIEW_SCHEDULE);
+
+						Boolean isPermitted = test.permissionController.isPermitted(test.user, resource, acessType);
+
+						if (Boolean.TRUE.equals(isPermitted)) {
+
+							String fileContent = FileUtil.readFile(input);
+
+							System.out.println(fileContent);
+
+						} else {
+							System.out.println("Not Permitted");
+						}
+
+					} else if ("7".equals(input)) {
+						// Create Schedule
+
+						// Add in resource table
+						System.out.print("Enter schedule file name : ");
+						String fileName = scan.nextLine();
+
+						FileUtil.writeIntoFile(fileName, "");
+
+						Resource resource = new Resource();
+
+						resource.setName(fileName);
+						resource.setStatus(Boolean.TRUE);
+
+						test.permissionController.saveResource(resource);
+
+						// Permission permission = new Permission();
+
+						resource = test.permissionController.getResources(resource) != null ? test.permissionController.getResources(resource).get(0)
+								: null;
+
+						if (resource == null) {
+							System.out.println("Unable to save resource");
+							continue;
+						}
+
+						List<AcessType> acessTypes = test.permissionController.getAllAcessTypes();
+
+						List<Permission> permissions = new ArrayList<Permission>();
+
+						for (AcessType acessType : acessTypes) {
+
+							if (Constants.ACCESS_TYPE_CREATE.equals(acessType.getName()) || Constants.ACCESS_TYPE_DELETE.equals(acessType.getName())
+									|| Constants.ACCESS_TYPE_UPDATE.equals(acessType.getName())
+									|| Constants.ACCESS_TYPE_VIEW.equals(acessType.getName())) {
+								continue;
+							}
+
+							Permission newPermission = new Permission();
+
+							newPermission.setAccesstypeid(acessType.getId());
+							newPermission.setResourceid(resource.getId());
+
+							permissions.add(newPermission);
+						}
+
+						for (Permission newPermission : permissions) {
+							test.permissionController.savePermission(newPermission);
+						}
+
+					} else if ("8".equals(input)) {
+						// Update Schedule
+
+						System.out.println();
+						System.out.print("Enter file name : ");
+						input = scan.nextLine();
+
+						Resource resource = new Resource();
+
+						resource.setName(input);
+
+						AcessType acessType = new AcessType();
+
+						acessType.setName(Constants.ACCESS_TYPE_UPDATE_SCHEDULE);
+
+						Boolean isPermitted = test.permissionController.isPermitted(test.user, resource, acessType);
+
+						if (Boolean.TRUE.equals(isPermitted)) {
+
+							String content = scan.nextLine();
+
+							FileUtil.appendIntoFile(input, content);
+
+							System.out.println("File Updated");
+
+						} else {
+							System.out.println("Not Permitted");
+						}
+
+					} else if ("9".equals(input)) {
+						// Delete Schedule
+
+						System.out.println();
+						System.out.print("Enter file name : ");
+						input = scan.nextLine();
+
+						Resource resource = new Resource();
+
+						resource.setName(input);
+
+						AcessType acessType = new AcessType();
+
+						acessType.setName(Constants.ACCESS_TYPE_DELETE);
+
+						Boolean isPermitted = test.permissionController.isPermitted(test.user, resource, acessType);
+
+						if (Boolean.TRUE.equals(isPermitted)) {
+
+							if (Boolean.TRUE.equals(FileUtil.deleteFile(input))) {
+								test.deleteResource(resource);
+								
+								System.out.println("File Deleted");
+							} else {
+								System.out.println("Not able to delete file");
+							}
+
+						} else {
+							System.out.println("Not Permitted");
+						}
+
+					} else {
+						System.out.println("Invalid Option");
+					}
+
 				}
+			} else {
 
-			} else if (isAdmin) {
-
-				if ("6".equals(input)) {
+				if ("1".equals(input)) {
 					// Create User
 
 					System.out.println();
@@ -374,7 +384,7 @@ public class Test {
 
 					test.userController.saveUser(newUser);
 
-				} else if ("7".equals(input)) {
+				} else if ("2".equals(input)) {
 					// Delete User
 					try {
 						List<User> users = test.userController.getAllUser();
@@ -404,7 +414,9 @@ public class Test {
 						List<UserRole> userRoles = test.userController.getUserRoles(userRole);
 
 						for (UserRole myUserRole : userRoles) {
-							test.userController.deleteUserRole(myUserRole);
+							if (myUser.equals(myUserRole.getUser())) {
+								test.userController.deleteUserRole(myUserRole);
+							}
 						}
 
 						test.userController.deleteUser(myUser);
@@ -413,23 +425,7 @@ public class Test {
 						System.out.println("Invalid selection");
 					}
 
-				} /*else if ("8".equals(input)) {
-					// Create Role
-
-					System.out.println();
-					System.out.print("Enter name : ");
-					String name = scan.nextLine();
-
-					Role newRole = new Role();
-
-					newRole.setName(name);
-
-					test.roleController.saveRole(newRole);
-
-				} else if ("9".equals(input)) {
-					// Delete Role
-
-				}*/ else if ("10".equals(input)) {
+				} else if ("3".equals(input)) {
 					// Create User Role
 
 					List<User> allUsers = test.userController.getAllUser();
@@ -445,7 +441,9 @@ public class Test {
 					try {
 						Integer selectedUser = Integer.parseInt(selectedUserOpt);
 
-						if (selectedUser > allUsers.size()) {
+						User myUser = test.userController.getUserById(selectedUser);
+
+						if (myUser == null) {
 							throw new Exception();
 						}
 
@@ -461,16 +459,9 @@ public class Test {
 
 						Integer selectedRole = Integer.parseInt(selectedRoleOpt);
 
-						/*
-						 * if (selectedRole > allRoles.size()) { throw new
-						 * Exception(); }
-						 */
-
 						Role role = test.roleController.getRoleById(selectedRole);
 
-						User myUser = test.userController.getUserById(selectedUser);
-
-						if (role == null || myUser == null) {
+						if (role == null) {
 							throw new Exception();
 						}
 
@@ -488,7 +479,7 @@ public class Test {
 						System.out.println("Invalid selection");
 					}
 
-				} else if ("11".equals(input)) {
+				} else if ("4".equals(input)) {
 					// Delete User Role
 
 					try {
@@ -516,26 +507,10 @@ public class Test {
 						System.out.println("Invalid selection");
 					}
 
-				} else if ("12".equals(input)) {
+				} else if ("5".equals(input)) {
 					// Create Permission
 					try {
 						System.out.println();
-						/*
-						 * System.out.println("1) " +
-						 * Constants.ACCESS_TYPE_CREATE); System.out.println(
-						 * "2) " + Constants.ACCESS_TYPE_DELETE);
-						 * System.out.println("3) " +
-						 * Constants.ACCESS_TYPE_UPDATE); System.out.println(
-						 * "4) " + Constants.ACCESS_TYPE_VIEW);
-						 * System.out.println("5) " +
-						 * Constants.ACCESS_TYPE_CREATE_SCHEDULE);
-						 * System.out.println("6) " +
-						 * Constants.ACCESS_TYPE_DELETE_SCHEDULE);
-						 * System.out.println("7) " +
-						 * Constants.ACCESS_TYPE_UPDATE_SCHEDULE);
-						 * System.out.println("8) " +
-						 * Constants.ACCESS_TYPE_VIEW_SCHEDULE);
-						 */
 
 						List<AcessType> acessTypes = test.permissionController.getAllAcessTypes();
 
@@ -584,7 +559,7 @@ public class Test {
 						System.out.println("Invalid selection");
 					}
 
-				} else if ("13".equals(input)) {
+				} else if ("6".equals(input)) {
 					// Delete Permission
 
 					List<Permission> allPermissions = test.permissionController.getAllPermissions();
@@ -620,12 +595,14 @@ public class Test {
 					List<RolePermission> rolePermissions = test.roleController.getRolePermissoins(rolePermission);
 
 					for (RolePermission myRolePermission : rolePermissions) {
-						test.roleController.deleteRolePermission(myRolePermission);
+						if (selectedPermission.equals(myRolePermission.getPermission())) {
+							test.roleController.deleteRolePermission(myRolePermission);
+						}
 					}
 
 					test.permissionController.deletePermission(selectedPermission);
 
-				} else if ("14".equals(input)) {
+				} else if ("7".equals(input)) {
 					// Create Role Permission
 
 					// Select role
@@ -653,7 +630,7 @@ public class Test {
 
 						for (Permission permission : allPermissions) {
 
-							AcessType acessType = test.permissionController.getAcessTypeById(permission.getId());
+							AcessType acessType = test.permissionController.getAcessTypeById(permission.getAccesstypeid());
 							Resource resource = test.permissionController.getResourceById(permission.getResourceid());
 
 							System.out.println(permission.getId() + ") Can " + acessType.getName() + " " + resource.getName());
@@ -683,7 +660,7 @@ public class Test {
 					} catch (Exception e) {
 						System.out.println("Invalid selection");
 					}
-				} else if ("15".equals(input)) {
+				} else if ("8".equals(input)) {
 					// Delete Role Permission
 
 					try {
@@ -694,11 +671,11 @@ public class Test {
 
 							Permission permission = rolePermission.getPermission();
 
-							AcessType acessType = test.permissionController.getAcessTypeById(permission.getId());
+							AcessType acessType = test.permissionController.getAcessTypeById(permission.getAccesstypeid());
 							Resource resource = test.permissionController.getResourceById(permission.getResourceid());
 
-							System.out.println(rolePermission.getId() + ") Role " + rolePermission.getRole().getName() + " can " + permission.getId()
-									+ ") Can " + acessType.getName() + " " + resource.getName());
+							System.out.println(rolePermission.getId() + ") Role " + rolePermission.getRole().getName() + " can " + acessType.getName()
+									+ " " + resource.getName());
 						}
 
 						System.out.println();
@@ -723,18 +700,52 @@ public class Test {
 					System.out.println("Invalid Option");
 				}
 
-			} else {
-				System.out.println("Invalid Option");
 			}
 		}
 
+	}
+
+	private void deleteResource(Resource resource) {
+		// Get resource
+		
+		List<Resource> resources = this.permissionController.getResources(resource);
+		
+		if(resources == null || Boolean.TRUE.equals(resources.isEmpty())) {
+			return;
+		}
+		
+		resource = resources.get(0);
+		
+		// Get permission by resource id
+		List<Permission> permissions = this.permissionController.getAllPermissions();
+		
+		for(Permission permission: permissions) {
+			if(resource.getId().equals(permission.getResourceid())) {
+				
+				// Get role permission by permission id
+				List<RolePermission> rolePermissions = this.roleController.getAllRolePermissoins();
+				
+				for(RolePermission rolePermission : rolePermissions) {
+					if(permission.equals(rolePermission.getPermission())) {
+						
+						// Delete Role Permission
+						this.roleController.deleteRolePermission(rolePermission);
+					}
+				}
+				// Delete Permission 
+				this.permissionController.deletePermission(permission);
+			}
+		}
+		
+		// Delete Resource
+		this.permissionController.deleteResource(resource);
 	}
 
 	public void printMenu() {
 		System.out.println();
 		System.out.println("Choose one of following options");
 		System.out.println();
-		
+
 		if (Boolean.FALSE.equals(isAdmin)) {
 			System.out.println("1) List Files");
 			System.out.println("2) Create File");
@@ -742,7 +753,7 @@ public class Test {
 			System.out.println("4) Update File");
 			System.out.println("5) Delete File");
 		}
-		
+
 		// Print Doctor Menu
 		if (Boolean.TRUE.equals(isDoctor)) {
 			System.out.println("6) View Schedule");
@@ -753,14 +764,14 @@ public class Test {
 
 		// Print Doctor Menu
 		if (Boolean.TRUE.equals(isAdmin)) {
-			System.out.println("6) Create User");
-			System.out.println("7) Delete User");
-			System.out.println("8) Create User Role");
-			System.out.println("9) Delete User Role");
-			System.out.println("10) Create Permission");
-			System.out.println("11) Delete Permission");
-			System.out.println("12) Create Role Permission");
-			System.out.println("13) Delete Role Permission");
+			System.out.println("1) Create User");
+			System.out.println("2) Delete User");
+			System.out.println("3) Create User Role");
+			System.out.println("4) Delete User Role");
+			System.out.println("5) Create Permission");
+			System.out.println("6) Delete Permission");
+			System.out.println("7) Create Role Permission");
+			System.out.println("8) Delete Role Permission");
 		}
 
 		System.out.println();
