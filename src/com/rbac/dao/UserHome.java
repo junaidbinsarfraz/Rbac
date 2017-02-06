@@ -7,7 +7,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.LockMode;
 import org.hibernate.SessionFactory;
+import org.hibernate.cache.internal.NoCachingRegionFactory;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.cfg.Environment;
 
 import com.rbac.model.User;
 
@@ -25,10 +27,13 @@ public class UserHome {
 
 	protected SessionFactory getSessionFactory() {
 		try {
-
-            SessionFactory sessionFactory = new Configuration().configure(
-                    "hibernate.cfg.xml")
-                    .buildSessionFactory();
+			Configuration configuration = new Configuration().configure(
+                    "hibernate.cfg.xml");
+			configuration.setProperty( Environment.USE_QUERY_CACHE, Boolean.FALSE.toString() );
+			configuration.setProperty( Environment.USE_SECOND_LEVEL_CACHE, Boolean.FALSE.toString() );
+			configuration.setProperty(Environment.CACHE_REGION_FACTORY,NoCachingRegionFactory.class.getName());
+//			configuration.setProperty(Environment.CACHE_PROVIDER_CONFIG,NoCachingRegionFactory.class.getName());	
+            SessionFactory sessionFactory = configuration.buildSessionFactory();
 
             return sessionFactory;
 
@@ -112,6 +117,7 @@ public class UserHome {
 			User instance = (User) sessionFactory.getCurrentSession().get("com.rbac.model.User", id);
 			if (instance == null) {
 				log.debug("get successful, no instance found");
+				sessionFactory.getCurrentSession().getTransaction().commit();
 			} else {
 				log.debug("get successful, instance found");
 			}
@@ -128,6 +134,7 @@ public class UserHome {
 			sessionFactory.getCurrentSession().beginTransaction();
 			List<User> results = (List<User>) sessionFactory.getCurrentSession().createCriteria("com.rbac.model.User").add(create(instance)).list();
 			log.debug("find by example successful, result size: " + results.size());
+			sessionFactory.getCurrentSession().getTransaction().commit();
 			return results;
 		} catch (RuntimeException re) {
 			log.error("find by example failed", re);
@@ -141,6 +148,7 @@ public class UserHome {
 			sessionFactory.getCurrentSession().beginTransaction();
 			List<User> results = (List<User>) sessionFactory.getCurrentSession().createCriteria("com.rbac.model.User").list();
 			log.debug("Get all users successful, result size: " + results.size());
+			sessionFactory.getCurrentSession().getTransaction().commit();
 			return results;
 		} catch (RuntimeException re) {
 			log.error("Get all users failed", re);
