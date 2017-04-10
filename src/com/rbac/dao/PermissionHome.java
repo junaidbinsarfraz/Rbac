@@ -7,7 +7,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.hibernate.LockMode;
 import org.hibernate.SessionFactory;
+import org.hibernate.cache.internal.NoCachingRegionFactory;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.cfg.Environment;
 
 import com.rbac.model.Permission;
 
@@ -26,10 +28,13 @@ public class PermissionHome {
 
 	protected SessionFactory getSessionFactory() {
 		try {
-
-            SessionFactory sessionFactory = new Configuration().configure(
-                    "hibernate.cfg.xml")
-                    .buildSessionFactory();
+			Configuration configuration = new Configuration().configure(
+                    "hibernate.cfg.xml");
+			configuration.setProperty( Environment.USE_QUERY_CACHE, Boolean.FALSE.toString() );
+			configuration.setProperty( Environment.USE_SECOND_LEVEL_CACHE, Boolean.FALSE.toString() );
+			configuration.setProperty(Environment.CACHE_REGION_FACTORY,NoCachingRegionFactory.class.getName());
+//			configuration.setProperty(Environment.CACHE_PROVIDER_CONFIG,NoCachingRegionFactory.class.getName());	
+            SessionFactory sessionFactory = configuration.buildSessionFactory();
 
             return sessionFactory;
 
@@ -113,6 +118,7 @@ public class PermissionHome {
 			Permission instance = (Permission) sessionFactory.getCurrentSession().get("com.rbac.model.Permission", id);
 			if (instance == null) {
 				log.debug("get successful, no instance found");
+				sessionFactory.getCurrentSession().getTransaction().commit();
 			} else {
 				log.debug("get successful, instance found");
 			}
@@ -130,6 +136,7 @@ public class PermissionHome {
 			List<Permission> results = (List<Permission>) sessionFactory.getCurrentSession().createCriteria("com.rbac.model.Permission")
 					.add(create(instance)).list();
 			log.debug("find by example successful, result size: " + results.size());
+			sessionFactory.getCurrentSession().getTransaction().commit();
 			return results;
 		} catch (RuntimeException re) {
 			log.error("find by example failed", re);
@@ -143,6 +150,7 @@ public class PermissionHome {
 			sessionFactory.getCurrentSession().beginTransaction();
 			List<Permission> results = (List<Permission>) sessionFactory.getCurrentSession().createCriteria("com.rbac.model.Permission").list();
 			log.debug("get all permissions successful, result size: " + results.size());
+			sessionFactory.getCurrentSession().getTransaction().commit();
 			return results;
 		} catch (RuntimeException re) {
 			log.error("get all permissions failed", re);
