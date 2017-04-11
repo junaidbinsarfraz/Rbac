@@ -1,4 +1,4 @@
-package com.rbac.view;
+package com.rbac.view.admin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,6 +7,7 @@ import com.rbac.common.Common;
 import com.rbac.model.AcessType;
 import com.rbac.model.Permission;
 import com.rbac.model.Resource;
+import com.rbac.model.Role;
 import com.rbac.model.RolePermission;
 
 import javafx.event.ActionEvent;
@@ -22,19 +23,31 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-public class DeletePermission {
+public class CreateRolePermission {
 
 	public void initialize(Stage primaryStage) {
 
 		Label errorLB = new Label();
 		errorLB.setTextFill(Color.web("#d1433e"));
 
-		List<Permission> allPermissions = Common.permissionController.getAllPermissions();
-		List<String> permissionsDescription = new ArrayList<>();
-		
-		for (Permission permission : allPermissions) {
+		List<Role> roles = Common.roleController.getAllRoles();
 
-			AcessType acessType = Common.permissionController.getAcessTypeById(permission.getId());
+		Label roleLB = new Label("Users");
+
+		final ComboBox<Role> roleComboBox = new ComboBox<Role>();
+		roleComboBox.getItems().addAll(roles);
+		roleComboBox.setPromptText("Select Role");
+
+		HBox roleHB = new HBox(10);
+		roleHB.setAlignment(Pos.CENTER);
+		roleHB.getChildren().addAll(roleLB, roleComboBox);
+
+		List<Permission> permissions = Common.permissionController.getAllPermissions();
+		List<String> permissionsDescription = new ArrayList<>();
+
+		for (Permission permission : permissions) {
+
+			AcessType acessType = Common.permissionController.getAcessTypeById(permission.getAccesstypeid());
 			Resource resource = Common.permissionController.getResourceById(permission.getResourceid());
 
 			permissionsDescription.add(permission.getId() + ") Can " + acessType.getName() + " " + resource.getName());
@@ -49,7 +62,7 @@ public class DeletePermission {
 		HBox permissionHB = new HBox(10);
 		permissionHB.setAlignment(Pos.CENTER);
 		permissionHB.getChildren().addAll(permissionLB, permissionComboBox);
-		
+
 		Button cancelBT = new Button("Cancel");
 		cancelBT.setOnAction(new EventHandler<ActionEvent>() {
 
@@ -61,8 +74,8 @@ public class DeletePermission {
 			}
 		});
 
-		Button deleteBT = new Button("Delete");
-		deleteBT.setOnAction(new EventHandler<ActionEvent>() {
+		Button createBT = new Button("Create");
+		createBT.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent event) {
@@ -75,29 +88,39 @@ public class DeletePermission {
 					return;
 				}
 				
-				Integer permissionId = Integer.parseInt(permissionDescription.split(")")[0]);
+				Integer permissionId = Integer.parseInt(permissionDescription.split("\\)")[0]);
 				
 				Permission selectedPermission = Common.permissionController.getPermissionById(permissionId);
 
 				if (selectedPermission == null) {
-					errorLB.setText("Unable to delete permission");
+					errorLB.setText("Unable to create role permission");
+					return;
+				}
+
+				Role role = roleComboBox.getSelectionModel().getSelectedItem();
+
+				if (role == null) {
+					errorLB.setText("Select role from list");
+					return;
+				}
+
+				role = Common.roleController.getRoleById(role.getId());
+				
+				if(role == null) {
+					errorLB.setText("Unable to create role permission");
 					return;
 				}
 				
+				// Assign user role
+
 				RolePermission rolePermission = new RolePermission();
 
 				rolePermission.setPermission(selectedPermission);
+				rolePermission.setRole(role);
+				rolePermission.setStatus(Boolean.TRUE);
 
-				List<RolePermission> rolePermissions = Common.roleController.getRolePermissoins(rolePermission);
+				Common.roleController.saveRolePermission(rolePermission);
 
-				for (RolePermission myRolePermission : rolePermissions) {
-					if (selectedPermission.equals(myRolePermission.getPermission())) {
-						Common.roleController.deleteRolePermission(myRolePermission);
-					}
-				}
-
-				Common.permissionController.deletePermission(selectedPermission);
-				
 				primaryStage.hide();
 				new AdminPanel().initialize(new Stage());
 			}
@@ -105,18 +128,18 @@ public class DeletePermission {
 
 		HBox buttonHB = new HBox(10);
 		buttonHB.setAlignment(Pos.CENTER);
-		buttonHB.getChildren().addAll(cancelBT, deleteBT);
+		buttonHB.getChildren().addAll(cancelBT, createBT);
 
 		VBox vBox = new VBox(5);
 		vBox.setAlignment(Pos.CENTER);
-		vBox.getChildren().addAll(errorLB, permissionHB, buttonHB);
+		vBox.getChildren().addAll(errorLB, roleHB, permissionHB, buttonHB);
 
 		StackPane root = new StackPane();
 		root.getChildren().addAll(vBox);
 
 		Scene scene = new Scene(root, 300, 300);
 
-		primaryStage.setTitle("Delete Permission");
+		primaryStage.setTitle("Create Role Permission");
 		primaryStage.setScene(scene);
 		primaryStage.show();
 

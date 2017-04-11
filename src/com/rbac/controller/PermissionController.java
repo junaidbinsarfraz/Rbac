@@ -118,4 +118,8 @@ public class PermissionController {
 		resourceHome.delete(resource);
 	}
 	
+	public List<Permission> getPerissions(Permission permission) {
+		return permissionHome.findByExample(permission);
+	}
+	
 }

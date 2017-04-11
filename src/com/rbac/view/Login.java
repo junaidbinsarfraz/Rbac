@@ -3,6 +3,8 @@ package com.rbac.view;
 import com.rbac.common.Common;
 import com.rbac.model.UserRole;
 import com.rbac.util.Constants;
+import com.rbac.view.admin.AdminPanel;
+import com.rbac.view.user.UserPanel;
 
 import javafx.application.Application;
 import javafx.event.ActionEvent;

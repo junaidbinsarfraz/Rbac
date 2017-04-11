@@ -1,4 +1,4 @@
-package com.rbac.view;
+package com.rbac.view.admin;
 
 import java.util.List;
 
@@ -48,8 +48,8 @@ public class DeleteUserRole {
 			}
 		});
 
-		Button createBT = new Button("Create");
-		createBT.setOnAction(new EventHandler<ActionEvent>() {
+		Button deleteBT = new Button("Delete");
+		deleteBT.setOnAction(new EventHandler<ActionEvent>() {
 
 			@Override
 			public void handle(ActionEvent event) {
@@ -76,7 +76,7 @@ public class DeleteUserRole {
 
 		HBox buttonHB = new HBox(10);
 		buttonHB.setAlignment(Pos.CENTER);
-		buttonHB.getChildren().addAll(cancelBT, createBT);
+		buttonHB.getChildren().addAll(cancelBT, deleteBT);
 
 		VBox vBox = new VBox(5);
 		vBox.setAlignment(Pos.CENTER);

@@ -35,7 +35,7 @@ CREATE TABLE `acess_type` (
 
 LOCK TABLES `acess_type` WRITE;
 /*!40000 ALTER TABLE `acess_type` DISABLE KEYS */;
-INSERT INTO `acess_type` VALUES (1,'Create'),(2,'Update'),(3,'Delete'),(4,'View'),(5,'Create Schedule'),(6,'Update Schedule'),(7,'Delete Schedule'),(8,'View Schedule');
+INSERT INTO `acess_type` VALUES (1,'Create'),(2,'Update'),(3,'Delete'),(4,'View');
 /*!40000 ALTER TABLE `acess_type` ENABLE KEYS */;
 UNLOCK TABLES;
 

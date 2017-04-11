@@ -7,7 +7,6 @@ import com.rbac.dao.PermissionHome;
 import com.rbac.dao.ResourceHome;
 import com.rbac.dao.UserHome;
 import com.rbac.dao.UserRoleHome;
-import com.rbac.model.Resource;
 import com.rbac.model.User;
 import com.rbac.model.UserRole;
 

@@ -1,4 +1,4 @@
-package com.rbac.view;
+package com.rbac.view.admin;
 
 import java.util.List;
 
@@ -95,9 +95,17 @@ public class CreatePermission {
 
 				permission.setAccesstypeid(acessType.getId());
 				permission.setResourceid(resource.getId());
-
+				
+				// if permission already exists 
+				List<Permission> permissions = Common.permissionController.getPerissions(permission);
+				
+				if(!(permissions == null || permissions.isEmpty())) {
+					permission = permissions.get(0);
+					permission.setStatus(Boolean.TRUE);
+				}
+				
 				Common.permissionController.savePermission(permission);
-
+				
 				primaryStage.hide();
 				new AdminPanel().initialize(new Stage());
 			}

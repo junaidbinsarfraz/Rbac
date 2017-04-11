@@ -1,4 +1,4 @@
-package com.rbac.view;
+package com.rbac.view.admin;
 
 import com.rbac.common.Common;
 import com.rbac.model.User;

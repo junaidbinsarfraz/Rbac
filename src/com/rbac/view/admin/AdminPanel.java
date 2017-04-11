@@ -1,4 +1,4 @@
-package com.rbac.view;
+package com.rbac.view.admin;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -26,6 +26,15 @@ public class AdminPanel {
 		Button deletePermissionBT = new Button("Delete Permission");
 		Button createRolePermissionBT = new Button("Create Role Permission");
 		Button deleteRolePermissionBT = new Button("Delete Role Permission");
+		
+		createUserBT.setPrefWidth(200);
+		deleteUserBT.setPrefWidth(200);
+		createUserRoleBT.setPrefWidth(200);
+		deleteUserRoleBT.setPrefWidth(200);
+		createPermissionBT.setPrefWidth(200);
+		deletePermissionBT.setPrefWidth(200);
+		createRolePermissionBT.setPrefWidth(200);
+		deleteRolePermissionBT.setPrefWidth(200);
 		
 		createUserBT.setOnAction(new EventHandler<ActionEvent>() {
 			

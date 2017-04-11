@@ -55,12 +55,14 @@ public class FileUtil {
 		return null;
 	}
 
-	public static void writeIntoFile(String fileName, String value) throws IOException {
+	public static Boolean writeIntoFile(String fileName, String value) throws IOException {
 
 		File file = new File(Constants.FILE_DIRECTORY + fileName);
 
 		if (Boolean.FALSE.equals(file.exists())) {
 			file.createNewFile();
+		} else {
+			return Boolean.FALSE;
 		}
 
 		BufferedWriter bufferedWriter = null;
@@ -76,6 +78,8 @@ public class FileUtil {
 		} catch (IOException e) {
 
 			e.printStackTrace();
+			
+			return Boolean.FALSE;
 
 		} finally {
 
@@ -90,9 +94,13 @@ public class FileUtil {
 			} catch (IOException ex) {
 
 				ex.printStackTrace();
+				
+				return Boolean.FALSE;
 
 			}
 		}
+		
+		return Boolean.TRUE;
 	}
 
 	public static void appendIntoFile(String fileName, String value) throws IOException {
@@ -100,7 +108,7 @@ public class FileUtil {
 		File file = new File(Constants.FILE_DIRECTORY + fileName);
 
 		if (Boolean.FALSE.equals(file.exists())) {
-			file.createNewFile();
+			throw new IOException("File not found");
 		}
 
 		BufferedWriter bufferedWriter = null;

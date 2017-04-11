@@ -1,4 +1,4 @@
-package com.rbac.view;
+package com.rbac.view.admin;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +79,7 @@ public class DeleteRolePermission {
 					return;
 				}
 				
-				Integer rolePermissionId = Integer.parseInt(rolePermissionDescription.split(")")[0]);
+				Integer rolePermissionId = Integer.parseInt(rolePermissionDescription.split("\\)")[0]);
 				
 				RolePermission rolePermission = Common.roleController.getRolePermissionById(rolePermissionId);
 
