@@ -9,4 +9,5 @@
   <table-filter match-catalog="rbac" match-name="role_permission"/>
   <table-filter match-catalog="rbac" match-name="user"/>
   <table-filter match-catalog="rbac" match-name="user_role"/>
+  <table-filter match-catalog="rbac" match-name="keys"/>
 </hibernate-reverse-engineering>

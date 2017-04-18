@@ -16,5 +16,14 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
+	<classpathentry kind="lib" path="lib/jpbc-api-2.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/jpbc-benchmark-2.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/jpbc-crypto-2.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/jpbc-mm-2.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/jpbc-pbc-2.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/jpbc-plaf-2.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/jpbc-site-skin-2.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/jpbc-test-2.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/bcprov-jdk16-1.46.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

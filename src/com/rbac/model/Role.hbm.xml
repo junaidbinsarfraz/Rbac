@@ -11,6 +11,12 @@
         <property name="name" type="string">
             <column name="name" length="45" />
         </property>
+        <property name="bits" type="string">
+            <column name="bits" length="45" />
+        </property>
+        <property name="bytes" type="java.lang.Integer">
+            <column name="bytes" />
+        </property>
         <bag name="userRoles" table="user_role" inverse="true" lazy="false" fetch="select">
             <key>
                 <column name="roleid" />

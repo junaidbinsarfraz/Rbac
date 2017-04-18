@@ -13,14 +13,18 @@ public class Role implements java.io.Serializable {
 
 	private Integer id;
 	private String name;
+	private String bits;
+	private Integer bytes;
 	private List<UserRole> userRoles = new ArrayList<UserRole>(0);
 	private List<RolePermission> rolePermissions = new ArrayList<RolePermission>(0);
 
 	public Role() {
 	}
 
-	public Role(String name, List<UserRole> userRoles, List<RolePermission> rolePermissions) {
+	public Role(String name, String bits, Integer bytes, List<UserRole> userRoles, List<RolePermission> rolePermissions) {
 		this.name = name;
+		this.bits = bits;
+		this.bytes = bytes;
 		this.userRoles = userRoles;
 		this.rolePermissions = rolePermissions;
 	}
@@ -60,6 +64,22 @@ public class Role implements java.io.Serializable {
 	@Override
 	public String toString() {
 		return id + ") " + name;
+	}
+
+	public String getBits() {
+		return bits;
+	}
+
+	public void setBits(String bits) {
+		this.bits = bits;
+	}
+
+	public Integer getBytes() {
+		return bytes;
+	}
+
+	public void setBytes(Integer bytes) {
+		this.bytes = bytes;
 	}
 
 }

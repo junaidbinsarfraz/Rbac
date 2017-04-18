@@ -5,6 +5,7 @@ import java.util.List;
 import com.rbac.dao.AcessTypeHome;
 import com.rbac.dao.PermissionHome;
 import com.rbac.dao.ResourceHome;
+import com.rbac.dao.RolePermissionHome;
 import com.rbac.dao.UserHome;
 import com.rbac.model.AcessType;
 import com.rbac.model.Permission;
@@ -20,6 +21,7 @@ public class PermissionController {
 	UserHome userHome = new UserHome();
 	PermissionHome permissionHome = new PermissionHome();
 	ResourceHome resourceHome = new ResourceHome();
+	RolePermissionHome rolePermissionHome = new RolePermissionHome();
 
 	public Boolean isPermitted(User user, Resource resource, AcessType acessType) {
 
@@ -120,6 +122,10 @@ public class PermissionController {
 	
 	public List<Permission> getPerissions(Permission permission) {
 		return permissionHome.findByExample(permission);
+	}
+	
+	public List<RolePermission> getRolePermission(RolePermission rolePermission) {
+		return rolePermissionHome.findByExample(rolePermission);
 	}
 	
 }

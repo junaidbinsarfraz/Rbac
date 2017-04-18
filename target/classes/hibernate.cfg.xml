@@ -20,5 +20,6 @@
         <mapping resource="com/rbac/model/Role.hbm.xml" />
         <mapping resource="com/rbac/model/RolePermission.hbm.xml" />
         <mapping resource="com/rbac/model/User.hbm.xml" />
+        <mapping resource="com/rbac/model/Keys.hbm.xml" />
     </session-factory>
 </hibernate-configuration>
