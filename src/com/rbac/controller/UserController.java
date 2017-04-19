@@ -18,6 +18,8 @@ public class UserController {
 	PermissionHome permissionHome = new PermissionHome();
 	UserRoleHome userRoleHome = new UserRoleHome();
 	
+	RoleController roleController = new RoleController();
+	
 	public void saveUser(User user) {
 		userHome.attachDirty(user);
 	}
@@ -60,10 +62,18 @@ public class UserController {
 	
 	public void deleteUserRole(UserRole userRole) {
 		userRoleHome.delete(userRole);
+		
+		roleController.RoleUpdate(userRole.getRole());
 	}
 	
 	public void deleteUser(User user) {
 		userHome.delete(user);
+		
+		List<UserRole> userRoles = this.getAllUserRoles();
+		
+		for(UserRole userRole : userRoles) {
+			deleteUserRole(userRole);
+		}
 	}
 	
 	public UserRole getUserRoleById(Integer id) {

@@ -22,6 +22,8 @@ public class PermissionController {
 	PermissionHome permissionHome = new PermissionHome();
 	ResourceHome resourceHome = new ResourceHome();
 	RolePermissionHome rolePermissionHome = new RolePermissionHome();
+	
+	RoleController roleController = new RoleController();
 
 	public Boolean isPermitted(User user, Resource resource, AcessType acessType) {
 
@@ -117,6 +119,25 @@ public class PermissionController {
 	}
 	
 	public void deleteResource(Resource resource) {
+		
+		Permission dummyPermission = new Permission();
+		
+		dummyPermission.setResourceid(resource.getId());
+		
+		List<Permission> permissions = this.getPerissions(dummyPermission);
+		
+		for(Permission permission : permissions) {
+			RolePermission dummyRolePermission = new RolePermission();
+			
+			dummyRolePermission.setPermission(permission);
+			
+			List<RolePermission> rolePermissions = roleController.getAllRolePermissoins(dummyRolePermission);
+			
+			for(RolePermission rolePermission : rolePermissions) {
+				roleController.deleteRolePermission(rolePermission);
+			}
+		}
+		
 		resourceHome.delete(resource);
 	}
 	

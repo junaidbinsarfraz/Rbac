@@ -57,10 +57,20 @@ public class RoleController {
 
 	public void deleteRolePermission(RolePermission rolePermission) {
 		rolePermissionHome.delete(rolePermission);
+		
+		Resource resource = permissionController.getResourceById(rolePermission.getPermission().getResourceid());
+		
+		encryptionController.reEncrypt(FileUtil.readFile(resource.getPath()).getBytes());
+		
+		this.RoleUpdate(rolePermission.getRole());
 	}
 	
 	public List<RolePermission> getAllRolePermissoins() {
 		return rolePermissionHome.getAllRolePermission();
+	}
+	
+	public List<RolePermission> getAllRolePermissoins(RolePermission rolePermission) {
+		return rolePermissionHome.findByExample(rolePermission);
 	}
 	
 	public RolePermission getRolePermissionById(Integer id) {
@@ -110,6 +120,9 @@ public class RoleController {
 			CipherParameters cp = keyController.generateUserKey(CryptoCommon.lastBitsUsedForCircuit);
 			
 			// TODO: Store keys 
+			
+			
+			
 		}
 		
 	}
