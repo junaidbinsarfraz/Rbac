@@ -55,6 +55,10 @@ public class RoleController {
 	
 	public void saveRolePermission(RolePermission rolePermission) {
 		rolePermissionHome.attachDirty(rolePermission);
+		
+		Resource resource = permissionController.getResourceById(rolePermission.getPermission().getResourceid());
+		
+		encryptionController.reEncrypt(FileUtil.readFile(resource.getPath()).getBytes(), rolePermission.getRole().getBits());
 	}
 	
 	public List<RolePermission> getRolePermissoins(RolePermission rolePermission) {
@@ -66,7 +70,7 @@ public class RoleController {
 		
 		Resource resource = permissionController.getResourceById(rolePermission.getPermission().getResourceid());
 		
-		encryptionController.reEncrypt(FileUtil.readFile(resource.getPath()).getBytes());
+		encryptionController.reEncrypt(FileUtil.readFile(resource.getPath()).getBytes(), rolePermission.getRole().getBits());
 		
 		this.RoleUpdate(rolePermission.getRole());
 	}
@@ -112,7 +116,7 @@ public class RoleController {
 			
 			String fileContent = FileUtil.readFile(resource.getPath());
 			
-			encryptionController.reEncrypt(fileContent.getBytes());
+			encryptionController.reEncrypt(fileContent.getBytes(), role.getBits());
 		}
 		
 		UserRole userRole = new UserRole();
@@ -121,21 +125,22 @@ public class RoleController {
 		
 		List<UserRole> userRoles = userController.getUserRoles(userRole);
 		
+		Integer bytes = 0;
+		
 		for(UserRole userR : userRoles) {
+			bytes += userR.getRole().getBytes();
+		}
+		
+		CipherParameters secretKey = keyController.generateUserKey(BitsUtil.get32BitString(Integer.toBinaryString(bytes)));
+		
+		try {
 			
-			CipherParameters cp = keyController.generateUserKey(CryptoCommon.lastBitsUsedForCircuit);
+			KeyStoreUtil.serializeSecretKey((GGHSW13SecretKeyParameters) secretKey, new FileOutputStream(userRole.getUser().getUsername() + ".txt"));
 			
-			try {
-				
-				KeyStoreUtil.serializeSecretKey((GGHSW13SecretKeyParameters) cp, new FileOutputStream(userRole.getUser().getUsername() + ".txt"));
-				
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			
-			
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 		
 	}

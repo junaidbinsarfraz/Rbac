@@ -51,8 +51,8 @@ public class EncryptionController {
     }
 	
 	// EncPE(FS[0], y, DecPE(msk, FS[p*]))
-	public byte[] reEncrypt(byte[] ciphertext) {
-		return this.encrypt(new String(this.decrypt(CryptoCommon.keyController.generateUserKey(CryptoCommon.lastBitsUsedForCircuit), ciphertext)));
+	public byte[] reEncrypt(byte[] ciphertext, String bits) {
+		return this.encrypt(new String(this.decrypt(CryptoCommon.keyController.generateUserKey(bits == null ? CryptoCommon.lastBitsUsedForCircuit : bits), ciphertext)));
 	}
 	
 }
