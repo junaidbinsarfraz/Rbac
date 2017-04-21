@@ -1,5 +1,8 @@
 package com.rbac.controller;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 import org.bouncycastle.crypto.CipherParameters;
@@ -8,6 +11,7 @@ import com.rbac.crypto.common.CryptoCommon;
 import com.rbac.crypto.controller.EncryptionController;
 import com.rbac.crypto.controller.KeyController;
 import com.rbac.crypto.util.BitsUtil;
+import com.rbac.crypto.util.KeyStoreUtil;
 import com.rbac.dao.AcessTypeHome;
 import com.rbac.dao.PermissionHome;
 import com.rbac.dao.ResourceHome;
@@ -20,6 +24,8 @@ import com.rbac.model.Role;
 import com.rbac.model.RolePermission;
 import com.rbac.model.UserRole;
 import com.rbac.util.FileUtil;
+
+import it.unisa.dia.gas.crypto.jpbc.fe.abe.gghsw13.params.GGHSW13SecretKeyParameters;
 
 public class RoleController {
 	
@@ -119,8 +125,15 @@ public class RoleController {
 			
 			CipherParameters cp = keyController.generateUserKey(CryptoCommon.lastBitsUsedForCircuit);
 			
-			// TODO: Store keys 
-			
+			try {
+				
+				KeyStoreUtil.serializeSecretKey((GGHSW13SecretKeyParameters) cp, new FileOutputStream(userRole.getUser().getUsername() + ".txt"));
+				
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			
 			
 		}

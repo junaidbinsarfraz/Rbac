@@ -3,8 +3,6 @@ package com.rbac.crypto.controller;
 import java.security.GeneralSecurityException;
 import java.security.SecureRandom;
 import java.security.Security;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -18,7 +16,6 @@ import com.rbac.crypto.util.BitsUtil;
 import com.rbac.crypto.util.CryptoConstants;
 
 import it.unisa.dia.gas.crypto.circuit.BooleanCircuit;
-import it.unisa.dia.gas.crypto.circuit.BooleanCircuit.BooleanCircuitGate;
 import it.unisa.dia.gas.crypto.jpbc.fe.abe.gghsw13.engines.GGHSW13KEMEngine;
 import it.unisa.dia.gas.crypto.jpbc.fe.abe.gghsw13.generators.GGHSW13KeyPairGenerator;
 import it.unisa.dia.gas.crypto.jpbc.fe.abe.gghsw13.generators.GGHSW13ParametersGenerator;
@@ -83,19 +80,7 @@ public class KeyController {
 		
 		// Generate Circuit 
 		
-		List<BooleanCircuitGate> bcgList = new ArrayList<BooleanCircuitGate>();
-		
-		for(int i = 0; i < bits.length(); i++) {
-			char bit = bits.charAt(i);
-			
-			if(bit == '1') {
-				bcgList.add(BitsUtil.on(i, 1));
-			} else {
-				bcgList.add(BitsUtil.off(i, 1));
-			}
-		}
-		
-		BooleanCircuit circuit = new BooleanCircuit(CryptoConstants.N, CryptoConstants.Q, 3, bcgList.toArray(new BooleanCircuitGate[bcgList.size()]));
+		BooleanCircuit circuit = BitsUtil.generateBooleanCircuit(bits);
 		
 		GGHSW13SecretKeyGenerator keyGen = new GGHSW13SecretKeyGenerator();
         keyGen.init(new GGHSW13SecretKeyGenerationParameters(
@@ -108,5 +93,5 @@ public class KeyController {
 
         return keyGen.generateKey();
 	}
-	
+
 }

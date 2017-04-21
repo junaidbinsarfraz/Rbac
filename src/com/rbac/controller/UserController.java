@@ -7,6 +7,7 @@ import com.rbac.dao.PermissionHome;
 import com.rbac.dao.ResourceHome;
 import com.rbac.dao.UserHome;
 import com.rbac.dao.UserRoleHome;
+import com.rbac.model.Role;
 import com.rbac.model.User;
 import com.rbac.model.UserRole;
 
@@ -34,6 +35,8 @@ public class UserController {
 	
 	public void assignUserRole(UserRole userRole) {
 		userRoleHome.attachDirty(userRole);
+		
+		
 	}
 	
 	public User login(String username, String password) {
@@ -61,9 +64,11 @@ public class UserController {
 	}
 	
 	public void deleteUserRole(UserRole userRole) {
+		Role role = userRole.getRole();
+		
 		userRoleHome.delete(userRole);
 		
-		roleController.RoleUpdate(userRole.getRole());
+		roleController.RoleUpdate(role);
 	}
 	
 	public void deleteUser(User user) {

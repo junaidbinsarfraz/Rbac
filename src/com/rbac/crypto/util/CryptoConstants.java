@@ -2,8 +2,9 @@ package com.rbac.crypto.util;
 
 public interface CryptoConstants {
 	
-	Integer N = 4;
-	Integer Q = 3;
+	Integer N = 32;
+	Integer Q = 0;
+	Integer DEPTH = 1;
 	Integer BIT_LENGTH = 32;
 	
 	String ASSIGNMENT = "1101";
