@@ -3,11 +3,13 @@ package com.rbac.controller;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bouncycastle.crypto.CipherParameters;
 
-import com.rbac.crypto.controller.KeyController;
+import com.rbac.common.Common;
+import com.rbac.crypto.common.CryptoCommon;
 import com.rbac.crypto.util.BitsUtil;
 import com.rbac.crypto.util.KeyStoreUtil;
 import com.rbac.dao.AcessTypeHome;
@@ -29,9 +31,6 @@ public class UserController {
 	PermissionHome permissionHome = new PermissionHome();
 	UserRoleHome userRoleHome = new UserRoleHome();
 	
-	RoleController roleController = new RoleController();
-	KeyController keyController = new KeyController();
-	
 	public void saveUser(User user) {
 		userHome.attachDirty(user);
 	}
@@ -44,6 +43,10 @@ public class UserController {
 		return userHome.findById(id);
 	}
 	
+	public void saveUserRole(UserRole userRole) {
+		userRoleHome.attachDirty(userRole);
+	}
+	
 	public void assignUserRole(UserRole userRole) {
 		userRoleHome.attachDirty(userRole);
 		
@@ -51,15 +54,11 @@ public class UserController {
 		
 		updatedUserRole.setUser(userRole.getUser());
 		
-		List<UserRole> userRoles = this.getUserRoles(updatedUserRole);
+		List<UserRole> userRoles = this.getUserRoles(userRole);
 		
-		Integer bytes = 0;
+		Integer bytes = BitsUtil.getBytesFromUserRoles(userRoles);
 		
-		for(UserRole userR : userRoles) {
-			bytes += userR.getRole().getBytes();
-		}
-		
-		CipherParameters secretKey = keyController.generateUserKey(BitsUtil.get32BitString(Integer.toBinaryString(bytes)));
+		CipherParameters secretKey = CryptoCommon.keyController.generateUserKey(BitsUtil.get32BitString(Integer.toBinaryString(bytes)));
 		
 		try {
 			
@@ -93,7 +92,20 @@ public class UserController {
 	}
 	
 	public List<UserRole> getUserRoles(UserRole userRole) {
-		return userRoleHome.findByExample(userRole);
+		
+		List<UserRole> userRoles = userRoleHome.findByExample(userRole);
+		
+		List<UserRole> selectedUserRoles = new ArrayList<>();
+		
+		for(UserRole userR : userRoles) {
+			if((userRole.getRole() != null && (userRole.getRole().getName().equalsIgnoreCase(userR.getRole().getName()))) 
+					&& userRole.getUser() != null && (userRole.getUser().getUsername().equalsIgnoreCase(userR.getUser().getUsername()))) {
+				selectedUserRoles.add(userR);
+			}
+		}
+			
+		
+		return selectedUserRoles;
 	}
 	
 	public void deleteUserRole(UserRole userRole) {
@@ -101,7 +113,7 @@ public class UserController {
 		
 		userRoleHome.delete(userRole);
 		
-		roleController.RoleUpdate(role);
+		Common.roleController.RoleUpdate(role);
 	}
 	
 	public void deleteUser(User user) {
@@ -116,6 +128,10 @@ public class UserController {
 	
 	public UserRole getUserRoleById(Integer id) {
 		return userRoleHome.findById(id);
+	}
+	
+	public List<User> getUsers(User user) {
+		return userHome.findByExample(user);
 	}
 	
 }

@@ -2,6 +2,7 @@ package com.rbac.controller;
 
 import java.util.List;
 
+import com.rbac.common.Common;
 import com.rbac.dao.AcessTypeHome;
 import com.rbac.dao.PermissionHome;
 import com.rbac.dao.ResourceHome;
@@ -23,8 +24,6 @@ public class PermissionController {
 	ResourceHome resourceHome = new ResourceHome();
 	RolePermissionHome rolePermissionHome = new RolePermissionHome();
 	
-	RoleController roleController = new RoleController();
-
 	public Boolean isPermitted(User user, Resource resource, AcessType acessType) {
 
 		List<AcessType> acessTypes = acessTypeHome.findByExample(acessType);
@@ -131,10 +130,10 @@ public class PermissionController {
 			
 			dummyRolePermission.setPermission(permission);
 			
-			List<RolePermission> rolePermissions = roleController.getAllRolePermissoins(dummyRolePermission);
+			List<RolePermission> rolePermissions = Common.roleController.getAllRolePermissoins(dummyRolePermission);
 			
 			for(RolePermission rolePermission : rolePermissions) {
-				roleController.deleteRolePermission(rolePermission);
+				Common.roleController.deleteRolePermission(rolePermission);
 			}
 		}
 		

@@ -1,8 +1,14 @@
 package com.rbac.crypto.controller;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+
 import org.bouncycastle.crypto.CipherParameters;
 
 import com.rbac.crypto.common.CryptoCommon;
+import com.rbac.crypto.util.CryptoConstants;
+import com.rbac.crypto.util.KeyStoreUtil;
+import com.rbac.util.Constants;
 
 import it.unisa.dia.gas.crypto.jpbc.fe.abe.gghsw13.params.GGHSW13EncryptionParameters;
 import it.unisa.dia.gas.crypto.jpbc.fe.abe.gghsw13.params.GGHSW13PublicKeyParameters;
@@ -18,7 +24,7 @@ public class EncryptionController {
                     new KEMCipherEncryptionParameters(
                             128,
                             new GGHSW13EncryptionParameters(
-                                    (GGHSW13PublicKeyParameters) CryptoCommon.keyPair.getPublic(),
+                                    (GGHSW13PublicKeyParameters) CryptoCommon.publicKey,
                                     assignment
                             )
                     ),
@@ -31,9 +37,12 @@ public class EncryptionController {
 	
 	public byte[] decrypt(CipherParameters secretKey, byte[] ciphertext) {
         try {
+        	
+        	byte[] encapsulation = KeyStoreUtil.desreializeEncapsulation(new FileInputStream(CryptoConstants.ENCAPSULATION_BYTE_FILE + CryptoCommon.lastFileName));
+        	
         	CryptoCommon.kemCipher.init(
                     false,
-                    new KEMCipherDecryptionParameters(secretKey, CryptoCommon.encapsulation, 128),
+                    new KEMCipherDecryptionParameters(secretKey, encapsulation, 128),
                     CryptoCommon.iv
             );
             return CryptoCommon.kemCipher.doFinal(ciphertext);
@@ -44,6 +53,11 @@ public class EncryptionController {
 	
 	public byte[] encrypt(String message) {
         try {
+        	
+        	byte[] encapsulation = CryptoCommon.encryptionController.initEncryption(CryptoConstants.ASSIGNMENT);
+        	
+        	KeyStoreUtil.serializeEncapsulation(encapsulation, new FileOutputStream(CryptoConstants.ENCAPSULATION_BYTE_FILE + CryptoCommon.lastFileName));
+        	
             return CryptoCommon.kemCipher.doFinal(message.getBytes());
         } catch (Exception e) {
             throw new RuntimeException(e);

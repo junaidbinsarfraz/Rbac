@@ -15,6 +15,9 @@ public class Common {
 	public static RoleController roleController = new RoleController();
 	public static UserController userController = new UserController();
 	
+	public static String bits = null;
+	public static Integer bytes = null;
+	
 	public static void updateUser() {
 		userController.getUserById(user.getId());
 	}

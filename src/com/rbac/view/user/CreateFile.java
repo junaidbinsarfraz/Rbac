@@ -63,7 +63,7 @@ public class CreateFile {
 				}
 				
 				try {
-					Boolean isFileCreated = FileUtil.writeIntoFile(fileName, "");
+					Boolean isFileCreated = FileUtil.writeIntoFile(fileName, "", Boolean.FALSE);
 					
 					if(Boolean.FALSE.equals(isFileCreated)) {
 						errorLB.setText("Unable to create file");

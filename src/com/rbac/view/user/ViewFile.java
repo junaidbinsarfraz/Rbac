@@ -1,10 +1,17 @@
 package com.rbac.view.user;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 import com.rbac.common.Common;
+import com.rbac.crypto.common.CryptoCommon;
+import com.rbac.crypto.util.BitsUtil;
+import com.rbac.crypto.util.KeyStoreUtil;
 import com.rbac.model.AcessType;
 import com.rbac.model.Resource;
+import com.rbac.model.UserRole;
 import com.rbac.util.Constants;
 import com.rbac.util.FileUtil;
 
@@ -83,7 +90,29 @@ public class ViewFile {
 				if (Boolean.TRUE.equals(isPermitted)) {
 
 					String fileContent = FileUtil.readFile(filename);
-
+					
+					CryptoCommon.lastFileName = filename;
+					
+					if(fileContent != null && Boolean.FALSE.equals(fileContent.isEmpty())) {
+						try {
+							
+							UserRole updatedUserRole = new UserRole();
+							
+							updatedUserRole.setUser(Common.user);
+							
+							List<UserRole> userRoles = Common.userController.getUserRoles(updatedUserRole);
+							
+							Integer bytes = BitsUtil.getBytesFromUserRoles(userRoles);
+							
+							fileContent = new String(CryptoCommon.encryptionController.decrypt(KeyStoreUtil.deserializeSecretKey(new FileInputStream(Common.user.getUsername() + ".txt"), 
+									CryptoCommon.paring, BitsUtil.get32BitString(Integer.toBinaryString(bytes))), fileContent.getBytes()));
+							
+						} catch (FileNotFoundException e) {
+							e.printStackTrace();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
 					contentTA.setText(fileContent);
 
 				} else {

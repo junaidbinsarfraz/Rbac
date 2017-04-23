@@ -89,7 +89,7 @@ public class Test {
 					System.out.print("Enter file name : ");
 					String fileName = scan.nextLine();
 
-					FileUtil.writeIntoFile(fileName, "");
+					FileUtil.writeIntoFile(fileName, "", Boolean.FALSE);
 
 					Resource resource = new Resource();
 
@@ -256,7 +256,7 @@ public class Test {
 						System.out.print("Enter schedule file name : ");
 						String fileName = scan.nextLine();
 
-						FileUtil.writeIntoFile(fileName, "");
+						FileUtil.writeIntoFile(fileName, "", Boolean.FALSE);
 
 						Resource resource = new Resource();
 

@@ -3,13 +3,13 @@ package com.rbac.controller;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.bouncycastle.crypto.CipherParameters;
 
+import com.rbac.common.Common;
 import com.rbac.crypto.common.CryptoCommon;
-import com.rbac.crypto.controller.EncryptionController;
-import com.rbac.crypto.controller.KeyController;
 import com.rbac.crypto.util.BitsUtil;
 import com.rbac.crypto.util.KeyStoreUtil;
 import com.rbac.dao.AcessTypeHome;
@@ -36,11 +36,6 @@ public class RoleController {
 	RoleHome roleHome = new RoleHome();
 	RolePermissionHome rolePermissionHome = new RolePermissionHome();
 	
-	PermissionController permissionController = new PermissionController();
-	EncryptionController encryptionController = new EncryptionController();
-	UserController userController = new UserController();
-	KeyController keyController = new KeyController();
-	
 	public void saveRole(Role role) {
 		roleHome.attachDirty(role);
 	}
@@ -56,21 +51,48 @@ public class RoleController {
 	public void saveRolePermission(RolePermission rolePermission) {
 		rolePermissionHome.attachDirty(rolePermission);
 		
-		Resource resource = permissionController.getResourceById(rolePermission.getPermission().getResourceid());
+		Resource resource = Common.permissionController.getResourceById(rolePermission.getPermission().getResourceid());
 		
-		encryptionController.reEncrypt(FileUtil.readFile(resource.getPath()).getBytes(), rolePermission.getRole().getBits());
+		byte[] bytes = FileUtil.readFile(resource.getName()).getBytes();
+		
+		if(bytes == null || bytes.length == 0) {
+			return;
+		}
+		
+		CryptoCommon.lastFileName = resource.getName();
+		
+		CryptoCommon.encryptionController.reEncrypt(bytes, rolePermission.getRole().getBits());
 	}
 	
 	public List<RolePermission> getRolePermissoins(RolePermission rolePermission) {
-		return rolePermissionHome.findByExample(rolePermission);
+		List<RolePermission> rolePermissions = rolePermissionHome.findByExample(rolePermission);
+		
+		List<RolePermission> selectedRolePermissions = new ArrayList<>(); 
+		
+		for(RolePermission roleP : rolePermissions) {
+			if(rolePermission.getPermission() != null && (rolePermission.getPermission().getAccesstypeid().equals(roleP.getPermission().getAccesstypeid())
+					&& rolePermission.getPermission().getResourceid().equals(roleP.getPermission().getResourceid()))) {
+				selectedRolePermissions.add(roleP);
+			}
+		}
+		
+		return selectedRolePermissions;
 	}
 
 	public void deleteRolePermission(RolePermission rolePermission) {
 		rolePermissionHome.delete(rolePermission);
 		
-		Resource resource = permissionController.getResourceById(rolePermission.getPermission().getResourceid());
+		Resource resource = Common.permissionController.getResourceById(rolePermission.getPermission().getResourceid());
 		
-		encryptionController.reEncrypt(FileUtil.readFile(resource.getPath()).getBytes(), rolePermission.getRole().getBits());
+		byte[] bytes = FileUtil.readFile(resource.getName()).getBytes();
+		
+		if(bytes == null || bytes.length == 0) {
+			return;
+		}
+		
+		CryptoCommon.lastFileName = resource.getName();
+		
+		CryptoCommon.encryptionController.reEncrypt(bytes, rolePermission.getRole().getBits());
 		
 		this.RoleUpdate(rolePermission.getRole());
 	}
@@ -107,31 +129,33 @@ public class RoleController {
 		
 		rolePermission.setRole(role);
 		
-		List<RolePermission> rolerPermissions = permissionController.getRolePermission(rolePermission);
+		List<RolePermission> rolerPermissions = Common.permissionController.getRolePermission(rolePermission);
 		
 		for(RolePermission rolePerm : rolerPermissions) {
 			Permission permission = rolePerm.getPermission();
 			
-			Resource resource = permissionController.getResourceById(permission.getResourceid());
+			Resource resource = Common.permissionController.getResourceById(permission.getResourceid());
 			
-			String fileContent = FileUtil.readFile(resource.getPath());
+			byte[] bytes = FileUtil.readFile(resource.getName()).getBytes();
 			
-			encryptionController.reEncrypt(fileContent.getBytes(), role.getBits());
+			if(bytes == null || bytes.length == 0) {
+				return;
+			}
+			
+			CryptoCommon.lastFileName = resource.getName();
+			
+			CryptoCommon.encryptionController.reEncrypt(bytes, role.getBits());
 		}
 		
 		UserRole userRole = new UserRole();
 		
 		userRole.setRole(role);
 		
-		List<UserRole> userRoles = userController.getUserRoles(userRole);
+		List<UserRole> userRoles = Common.userController.getUserRoles(userRole);
 		
-		Integer bytes = 0;
+		Integer bytes = BitsUtil.getBytesFromUserRoles(userRoles);
 		
-		for(UserRole userR : userRoles) {
-			bytes += userR.getRole().getBytes();
-		}
-		
-		CipherParameters secretKey = keyController.generateUserKey(BitsUtil.get32BitString(Integer.toBinaryString(bytes)));
+		CipherParameters secretKey = CryptoCommon.keyController.generateUserKey(BitsUtil.get32BitString(Integer.toBinaryString(bytes)));
 		
 		try {
 			
@@ -143,6 +167,10 @@ public class RoleController {
 			e.printStackTrace();
 		}
 		
+	}
+	
+	public List<Role> getRoles(Role role) {
+		return roleHome.findByExample(role);
 	}
 	
 }

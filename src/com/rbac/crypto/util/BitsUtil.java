@@ -3,6 +3,8 @@ package com.rbac.crypto.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.rbac.model.UserRole;
+
 import it.unisa.dia.gas.crypto.circuit.BooleanCircuit;
 import it.unisa.dia.gas.crypto.circuit.BooleanCircuit.BooleanCircuitGate;
 import it.unisa.dia.gas.crypto.circuit.Gate.Type;
@@ -27,6 +29,17 @@ public class BitsUtil {
 	
 	public static BooleanCircuitGate off(int index, int depth) {
 		return new BooleanCircuitGate(Type.INPUT, index, depth);
+	}
+	
+	public static Integer getBytesFromUserRoles(List<UserRole> userRoles) {
+		
+		Integer bytes = 0;
+		
+		for(UserRole userR : userRoles) {
+			bytes += userR.getRole().getBytes();
+		}
+		
+		return bytes;
 	}
 	
 	public static BooleanCircuit generateBooleanCircuit(String bits) {

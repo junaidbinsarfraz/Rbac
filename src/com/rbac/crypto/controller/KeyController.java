@@ -1,8 +1,13 @@
 package com.rbac.crypto.controller;
 
-import java.security.GeneralSecurityException;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.security.SecureRandom;
 import java.security.Security;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -11,9 +16,14 @@ import org.bouncycastle.crypto.AsymmetricCipherKeyPair;
 import org.bouncycastle.crypto.CipherParameters;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
+import com.rbac.common.Common;
 import com.rbac.crypto.common.CryptoCommon;
 import com.rbac.crypto.util.BitsUtil;
 import com.rbac.crypto.util.CryptoConstants;
+import com.rbac.crypto.util.KeyStoreUtil;
+import com.rbac.model.User;
+import com.rbac.model.UserRole;
+import com.rbac.util.FileUtil;
 
 import it.unisa.dia.gas.crypto.circuit.BooleanCircuit;
 import it.unisa.dia.gas.crypto.jpbc.fe.abe.gghsw13.engines.GGHSW13KEMEngine;
@@ -24,12 +34,14 @@ import it.unisa.dia.gas.crypto.jpbc.fe.abe.gghsw13.params.GGHSW13KeyPairGenerati
 import it.unisa.dia.gas.crypto.jpbc.fe.abe.gghsw13.params.GGHSW13MasterSecretKeyParameters;
 import it.unisa.dia.gas.crypto.jpbc.fe.abe.gghsw13.params.GGHSW13PublicKeyParameters;
 import it.unisa.dia.gas.crypto.jpbc.fe.abe.gghsw13.params.GGHSW13SecretKeyGenerationParameters;
+import it.unisa.dia.gas.crypto.jpbc.fe.abe.gghsw13.params.GGHSW13SecretKeyParameters;
 import it.unisa.dia.gas.crypto.kem.cipher.engines.KEMCipher;
-import it.unisa.dia.gas.plaf.jpbc.pairing.PairingFactory;
 
 public class KeyController {
 	
-	public void initKeys() throws GeneralSecurityException {
+	private AsymmetricCipherKeyPair keyPair;
+	
+	public void initKeys() throws Exception {
 		Security.addProvider(new BouncyCastleProvider());
 		
 		CryptoCommon.kemCipher = new KEMCipher(
@@ -43,14 +55,43 @@ public class KeyController {
 		
 		setup(CryptoConstants.N);
 		
-		CryptoCommon.encapsulation = CryptoCommon.encryptionController.initEncryption(CryptoConstants.ASSIGNMENT);
+		CryptoCommon.masterSecretKey = keyPair.getPrivate();
+		
+		CryptoCommon.publicKey = keyPair.getPublic();
+		
+		KeyStoreUtil.serializeMasterSecretKey((GGHSW13MasterSecretKeyParameters) CryptoCommon.masterSecretKey, new FileOutputStream(CryptoConstants.MASTER_SECRET_KEY_FILE));
+		
+		KeyStoreUtil.serializePublicKey((GGHSW13PublicKeyParameters) CryptoCommon.publicKey, new FileOutputStream(CryptoConstants.PUBLIC_KEY_FILE));
+		
+//		KeyStoreUtil.serializeEncapsulation(CryptoCommon.encapsulation, new FileOutputStream(CryptoConstants.ENCAPSULATION_BYTE_FILE));
+	}
+	
+	public void init() throws Exception {
+		Security.addProvider(new BouncyCastleProvider());
+		
+		CryptoCommon.kemCipher = new KEMCipher(
+                Cipher.getInstance("AES/CBC/PKCS7Padding", "BC"),
+                new GGHSW13KEMEngine()
+        );
+
+        // build the initialization vector.  This example is all zeros, but it
+        // could be any value or generated using a random number generator.
+		CryptoCommon.iv = new IvParameterSpec(new byte[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
+		
+		CryptoCommon.masterSecretKey = KeyStoreUtil.deserializeMasterSecretKey(new FileInputStream(CryptoConstants.MASTER_SECRET_KEY_FILE), CryptoCommon.paring);
+		
+		CryptoCommon.publicKey = KeyStoreUtil.deserializePublicKey(new FileInputStream(CryptoConstants.PUBLIC_KEY_FILE), CryptoCommon.paring);
+		
+//		CryptoCommon.encapsulation = KeyStoreUtil.desreializeEncapsulation(new FileInputStream(CryptoConstants.ENCAPSULATION_BYTE_FILE));
+		
+		
 	}
 	
 	public CipherParameters keyGen(BooleanCircuit circuit) {
         GGHSW13SecretKeyGenerator keyGen = new GGHSW13SecretKeyGenerator();
         keyGen.init(new GGHSW13SecretKeyGenerationParameters(
-                (GGHSW13PublicKeyParameters) CryptoCommon.keyPair.getPublic(),
-                (GGHSW13MasterSecretKeyParameters) CryptoCommon.keyPair.getPrivate(),
+                (GGHSW13PublicKeyParameters) CryptoCommon.publicKey,
+                (GGHSW13MasterSecretKeyParameters) CryptoCommon.masterSecretKey,
                 circuit
         ));
 
@@ -62,11 +103,11 @@ public class KeyController {
         setup.init(new GGHSW13KeyPairGenerationParameters(
                 new SecureRandom(),
                 new GGHSW13ParametersGenerator().init(
-                        PairingFactory.getPairing("params/mm/ctl13/toy.properties"),
+                		CryptoCommon.paring,
                         n).generateParameters()
         ));
 
-        return (CryptoCommon.keyPair = setup.generateKeyPair());
+        return (keyPair = setup.generateKeyPair());
     }
 	
 	// Circuit generation
@@ -84,8 +125,8 @@ public class KeyController {
 		
 		GGHSW13SecretKeyGenerator keyGen = new GGHSW13SecretKeyGenerator();
         keyGen.init(new GGHSW13SecretKeyGenerationParameters(
-                (GGHSW13PublicKeyParameters) CryptoCommon.keyPair.getPublic(),
-                (GGHSW13MasterSecretKeyParameters) CryptoCommon.keyPair.getPrivate(),
+                (GGHSW13PublicKeyParameters) CryptoCommon.publicKey,
+                (GGHSW13MasterSecretKeyParameters) CryptoCommon.masterSecretKey,
                 circuit
         ));
         

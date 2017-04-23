@@ -3,9 +3,11 @@ package com.rbac.util;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,14 +15,21 @@ public class FileUtil {
 
 	public static String readFile(String fileName) {
 
-		StringBuilder sb = new StringBuilder();
+//		StringBuilder sb = new StringBuilder();
 
 		// Read from file
 		File file = new File(Constants.FILE_DIRECTORY + fileName);
-
+		
 		if (file.exists()) {
+			
+			try {
+				return new String(Files.readAllBytes(file.toPath()));
+			} catch (IOException e) {
+				e.printStackTrace();
+				return null;
+			}
 
-			BufferedReader bufferedReader = null;
+			/*BufferedReader bufferedReader = null;
 			FileReader fileReader = null;
 
 			try {
@@ -49,23 +58,36 @@ public class FileUtil {
 					ex.printStackTrace();
 				}
 			}
-			return sb.toString();
+			return sb.toString();*/
 		}
 
 		return null;
 	}
 
-	public static Boolean writeIntoFile(String fileName, String value) throws IOException {
+	public static Boolean writeIntoFile(String fileName, String value, Boolean isUpdated) throws IOException {
 
 		File file = new File(Constants.FILE_DIRECTORY + fileName);
 
-		if (Boolean.FALSE.equals(file.exists())) {
-			file.createNewFile();
-		} else {
-			return Boolean.FALSE;
+		if(Boolean.FALSE.equals(isUpdated)) {
+			if (Boolean.FALSE.equals(file.exists())) {
+				file.createNewFile();
+			} else {
+				return Boolean.FALSE;
+			}
 		}
-
-		BufferedWriter bufferedWriter = null;
+		
+		FileOutputStream stream = new FileOutputStream(file);
+		try {
+		    stream.write(value.getBytes());
+		} catch(Exception e) {
+			return Boolean.FALSE;
+		} finally {
+		    stream.close();
+		}
+		
+		return Boolean.TRUE;
+		
+		/*BufferedWriter bufferedWriter = null;
 		FileWriter fileWriter = null;
 
 		try {
@@ -98,9 +120,7 @@ public class FileUtil {
 				return Boolean.FALSE;
 
 			}
-		}
-		
-		return Boolean.TRUE;
+		}*/
 	}
 
 	public static void appendIntoFile(String fileName, String value) throws IOException {
@@ -176,9 +196,9 @@ public class FileUtil {
 		return files;
 	}
 
-	public static Boolean isFileExists(String fileName) {
+	/*public static Boolean isFileExists(String fileName) {
 
 		return Boolean.FALSE;
-	}
+	}*/
 
 }
