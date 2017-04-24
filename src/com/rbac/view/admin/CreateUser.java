@@ -1,5 +1,7 @@
 package com.rbac.view.admin;
 
+import java.util.List;
+
 import com.rbac.common.Common;
 import com.rbac.model.User;
 
@@ -68,6 +70,18 @@ public class CreateUser {
 
 				if ("".equals(name) || "".equals(username) || "".equals(password)) {
 					errorLB.setText("All fields are mendatory");
+					return;
+				}
+				
+				// Check if user already exists
+				User user =  new User();
+				
+				user.setUsername(username);
+				
+				List<User> users = Common.userController.getUsers(user);
+				
+				if(users != null && !users.isEmpty()) {
+					errorLB.setText("User already exists");
 					return;
 				}
 				

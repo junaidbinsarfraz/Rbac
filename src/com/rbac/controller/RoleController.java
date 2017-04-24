@@ -11,6 +11,7 @@ import org.bouncycastle.crypto.CipherParameters;
 import com.rbac.common.Common;
 import com.rbac.crypto.common.CryptoCommon;
 import com.rbac.crypto.util.BitsUtil;
+import com.rbac.crypto.util.CryptoConstants;
 import com.rbac.crypto.util.KeyStoreUtil;
 import com.rbac.dao.AcessTypeHome;
 import com.rbac.dao.PermissionHome;
@@ -49,11 +50,28 @@ public class RoleController {
 	}
 	
 	public void saveRolePermission(RolePermission rolePermission) {
+		
+		/*RolePermission rolePermissionDummy = new RolePermission();
+		
+		rolePermissionDummy.setPermission(rolePermission.getPermission());
+		rolePermissionDummy.setRole(rolePermission.getRole());
+		
+		List<RolePermission> rolePermissions = this.getAllRolePermissoins(rolePermissionDummy);
+				
+		for(RolePermission roleP : rolePermissions) {
+			roleP.setStatus(Boolean.TRUE);
+			rolePermissionHome.merge(roleP);
+		}
+		
+		if(rolePermissions == null || rolePermissions.isEmpty()) {
+			rolePermissionHome.attachDirty(rolePermission);
+		}*/
+		
 		rolePermissionHome.attachDirty(rolePermission);
 		
 		Resource resource = Common.permissionController.getResourceById(rolePermission.getPermission().getResourceid());
 		
-		byte[] bytes = FileUtil.readFile(resource.getName()).getBytes();
+		byte[] bytes = FileUtil.readFile(resource.getName());
 		
 		if(bytes == null || bytes.length == 0) {
 			return;
@@ -84,7 +102,7 @@ public class RoleController {
 		
 		Resource resource = Common.permissionController.getResourceById(rolePermission.getPermission().getResourceid());
 		
-		byte[] bytes = FileUtil.readFile(resource.getName()).getBytes();
+		byte[] bytes = FileUtil.readFile(resource.getName());
 		
 		if(bytes == null || bytes.length == 0) {
 			return;
@@ -136,7 +154,7 @@ public class RoleController {
 			
 			Resource resource = Common.permissionController.getResourceById(permission.getResourceid());
 			
-			byte[] bytes = FileUtil.readFile(resource.getName()).getBytes();
+			byte[] bytes = FileUtil.readFile(resource.getName());
 			
 			if(bytes == null || bytes.length == 0) {
 				return;
@@ -159,7 +177,7 @@ public class RoleController {
 		
 		try {
 			
-			KeyStoreUtil.serializeSecretKey((GGHSW13SecretKeyParameters) secretKey, new FileOutputStream(userRole.getUser().getUsername() + ".txt"));
+			KeyStoreUtil.serializeSecretKey((GGHSW13SecretKeyParameters) secretKey, new FileOutputStream(CryptoConstants.KEY_DIRECTORY + userRole.getUser().getUsername() + ".txt"));
 			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

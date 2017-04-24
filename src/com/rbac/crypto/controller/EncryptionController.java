@@ -8,7 +8,6 @@ import org.bouncycastle.crypto.CipherParameters;
 import com.rbac.crypto.common.CryptoCommon;
 import com.rbac.crypto.util.CryptoConstants;
 import com.rbac.crypto.util.KeyStoreUtil;
-import com.rbac.util.Constants;
 
 import it.unisa.dia.gas.crypto.jpbc.fe.abe.gghsw13.params.GGHSW13EncryptionParameters;
 import it.unisa.dia.gas.crypto.jpbc.fe.abe.gghsw13.params.GGHSW13PublicKeyParameters;
@@ -38,7 +37,7 @@ public class EncryptionController {
 	public byte[] decrypt(CipherParameters secretKey, byte[] ciphertext) {
         try {
         	
-        	byte[] encapsulation = KeyStoreUtil.desreializeEncapsulation(new FileInputStream(CryptoConstants.ENCAPSULATION_BYTE_FILE + CryptoCommon.lastFileName));
+        	byte[] encapsulation = KeyStoreUtil.desreializeEncapsulation(new FileInputStream(CryptoConstants.ENCAPSULATION_DIRECTORY + CryptoConstants.ENCAPSULATION_BYTE_FILE + CryptoCommon.lastFileName));
         	
         	CryptoCommon.kemCipher.init(
                     false,
@@ -56,7 +55,7 @@ public class EncryptionController {
         	
         	byte[] encapsulation = CryptoCommon.encryptionController.initEncryption(CryptoConstants.ASSIGNMENT);
         	
-        	KeyStoreUtil.serializeEncapsulation(encapsulation, new FileOutputStream(CryptoConstants.ENCAPSULATION_BYTE_FILE + CryptoCommon.lastFileName));
+        	KeyStoreUtil.serializeEncapsulation(encapsulation, new FileOutputStream(CryptoConstants.ENCAPSULATION_DIRECTORY + CryptoConstants.ENCAPSULATION_BYTE_FILE + CryptoCommon.lastFileName));
         	
             return CryptoCommon.kemCipher.doFinal(message.getBytes());
         } catch (Exception e) {

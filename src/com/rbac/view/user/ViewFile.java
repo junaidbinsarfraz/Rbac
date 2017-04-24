@@ -8,6 +8,7 @@ import java.util.List;
 import com.rbac.common.Common;
 import com.rbac.crypto.common.CryptoCommon;
 import com.rbac.crypto.util.BitsUtil;
+import com.rbac.crypto.util.CryptoConstants;
 import com.rbac.crypto.util.KeyStoreUtil;
 import com.rbac.model.AcessType;
 import com.rbac.model.Resource;
@@ -84,16 +85,18 @@ public class ViewFile {
 				AcessType acessType = new AcessType();
 
 				acessType.setName(Constants.ACCESS_TYPE_VIEW);
-
+				
+				Common.user = Common.userController.getUserById(Common.user.getId());
+				
 				Boolean isPermitted = Common.permissionController.isPermitted(Common.user, resource, acessType);
 
 				if (Boolean.TRUE.equals(isPermitted)) {
 
-					String fileContent = FileUtil.readFile(filename);
+					byte[] fileContent = FileUtil.readFile(filename);
 					
 					CryptoCommon.lastFileName = filename;
 					
-					if(fileContent != null && Boolean.FALSE.equals(fileContent.isEmpty())) {
+					if(fileContent != null && fileContent.length > 0) {
 						try {
 							
 							UserRole updatedUserRole = new UserRole();
@@ -104,8 +107,8 @@ public class ViewFile {
 							
 							Integer bytes = BitsUtil.getBytesFromUserRoles(userRoles);
 							
-							fileContent = new String(CryptoCommon.encryptionController.decrypt(KeyStoreUtil.deserializeSecretKey(new FileInputStream(Common.user.getUsername() + ".txt"), 
-									CryptoCommon.paring, BitsUtil.get32BitString(Integer.toBinaryString(bytes))), fileContent.getBytes()));
+							fileContent = CryptoCommon.encryptionController.decrypt(KeyStoreUtil.deserializeSecretKey(new FileInputStream(CryptoConstants.KEY_DIRECTORY + Common.user.getUsername() + ".txt"), 
+									CryptoCommon.paring, BitsUtil.get32BitString(Integer.toBinaryString(bytes))), fileContent);
 							
 						} catch (FileNotFoundException e) {
 							e.printStackTrace();
@@ -113,7 +116,7 @@ public class ViewFile {
 							e.printStackTrace();
 						}
 					}
-					contentTA.setText(fileContent);
+					contentTA.setText(new String(fileContent));
 
 				} else {
 					errorLB.setText("Not Permitted");

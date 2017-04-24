@@ -8,6 +8,7 @@ import java.util.List;
 import com.rbac.common.Common;
 import com.rbac.crypto.common.CryptoCommon;
 import com.rbac.crypto.util.BitsUtil;
+import com.rbac.crypto.util.CryptoConstants;
 import com.rbac.crypto.util.KeyStoreUtil;
 import com.rbac.model.AcessType;
 import com.rbac.model.Resource;
@@ -88,20 +89,22 @@ public void initialize(Stage primaryStage) {
 				AcessType acessType = new AcessType();
 
 				acessType.setName(Constants.ACCESS_TYPE_UPDATE);
-
+				
+				Common.user = Common.userController.getUserById(Common.user.getId());
+				
 				Boolean isPermitted = Common.permissionController.isPermitted(Common.user, resource, acessType);
 
 				if (Boolean.TRUE.equals(isPermitted)) {
 
-					String content = textTA.getText();
+					byte[] content = textTA.getText().getBytes();
 
 					try {
 						
-						String fileContent = FileUtil.readFile(filename);
+						byte[] fileContent = FileUtil.readFile(filename);
 						
 						CryptoCommon.lastFileName = filename;
 						
-						if(fileContent != null && Boolean.FALSE.equals(fileContent.isEmpty())) {
+						if(fileContent != null && fileContent.length > 0) {
 							try {
 								
 								UserRole updatedUserRole = new UserRole();
@@ -112,8 +115,8 @@ public void initialize(Stage primaryStage) {
 								
 								Integer bytes = BitsUtil.getBytesFromUserRoles(userRoles);
 								
-								fileContent = new String(CryptoCommon.encryptionController.decrypt(KeyStoreUtil.deserializeSecretKey(new FileInputStream(Common.user.getUsername() + ".txt"), 
-										CryptoCommon.paring, BitsUtil.get32BitString(Integer.toBinaryString(bytes))), fileContent.getBytes()));
+								fileContent = CryptoCommon.encryptionController.decrypt(KeyStoreUtil.deserializeSecretKey(new FileInputStream(CryptoConstants.KEY_DIRECTORY + Common.user.getUsername() + ".txt"), 
+										CryptoCommon.paring, BitsUtil.get32BitString(Integer.toBinaryString(bytes))), fileContent);
 								
 							} catch (FileNotFoundException e) {
 								e.printStackTrace();
@@ -122,11 +125,15 @@ public void initialize(Stage primaryStage) {
 							}
 						}
 						
-						fileContent += content;
+						byte[] destination = new byte[fileContent.length + content.length];
+						
+						System.arraycopy(fileContent, 0, destination, 0, fileContent.length);
+						
+						System.arraycopy(content, 0, destination, fileContent.length, content.length);
 						
 //						FileUtil.appendIntoFile(filename, content);
 						
-						FileUtil.writeIntoFile(filename, new String(CryptoCommon.encryptionController.encrypt(fileContent)), Boolean.TRUE);
+						FileUtil.writeIntoFile(filename, CryptoCommon.encryptionController.encrypt(new String(destination)), Boolean.TRUE);
 						
 					} catch (IOException e) {
 						errorLB.setText(e.getMessage());

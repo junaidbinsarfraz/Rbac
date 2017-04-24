@@ -1,10 +1,8 @@
 package com.rbac.util;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,9 +11,7 @@ import java.util.List;
 
 public class FileUtil {
 
-	public static String readFile(String fileName) {
-
-//		StringBuilder sb = new StringBuilder();
+	public static byte[] readFile(String fileName) {
 
 		// Read from file
 		File file = new File(Constants.FILE_DIRECTORY + fileName);
@@ -23,48 +19,20 @@ public class FileUtil {
 		if (file.exists()) {
 			
 			try {
-				return new String(Files.readAllBytes(file.toPath()));
+				byte[] bytes = Files.readAllBytes(file.toPath());
+				
+				return bytes;
 			} catch (IOException e) {
 				e.printStackTrace();
 				return null;
 			}
 
-			/*BufferedReader bufferedReader = null;
-			FileReader fileReader = null;
-
-			try {
-				fileReader = new FileReader(file);
-				bufferedReader = new BufferedReader(fileReader);
-
-				String line;
-				while ((line = bufferedReader.readLine()) != null) {
-					sb.append(line + "\n");
-				}
-
-			} catch (Exception ex) {
-				return null;
-			} finally {
-				try {
-
-					if (bufferedReader != null) {
-						bufferedReader.close();
-					}
-
-					if (fileReader != null) {
-						fileReader.close();
-					}
-
-				} catch (IOException ex) {
-					ex.printStackTrace();
-				}
-			}
-			return sb.toString();*/
 		}
 
 		return null;
 	}
 
-	public static Boolean writeIntoFile(String fileName, String value, Boolean isUpdated) throws IOException {
+	public static Boolean writeIntoFile(String fileName, byte[] value, Boolean isUpdated) throws IOException {
 
 		File file = new File(Constants.FILE_DIRECTORY + fileName);
 
@@ -78,49 +46,16 @@ public class FileUtil {
 		
 		FileOutputStream stream = new FileOutputStream(file);
 		try {
-		    stream.write(value.getBytes());
+			stream.write(value);
 		} catch(Exception e) {
 			return Boolean.FALSE;
 		} finally {
+			stream.flush();
 		    stream.close();
 		}
 		
 		return Boolean.TRUE;
 		
-		/*BufferedWriter bufferedWriter = null;
-		FileWriter fileWriter = null;
-
-		try {
-
-			fileWriter = new FileWriter(file.getAbsolutePath());
-			bufferedWriter = new BufferedWriter(fileWriter);
-
-			bufferedWriter.write(value != null ? value : "");
-
-		} catch (IOException e) {
-
-			e.printStackTrace();
-			
-			return Boolean.FALSE;
-
-		} finally {
-
-			try {
-
-				if (bufferedWriter != null)
-					bufferedWriter.close();
-
-				if (fileWriter != null)
-					fileWriter.close();
-
-			} catch (IOException ex) {
-
-				ex.printStackTrace();
-				
-				return Boolean.FALSE;
-
-			}
-		}*/
 	}
 
 	public static void appendIntoFile(String fileName, String value) throws IOException {
@@ -195,10 +130,5 @@ public class FileUtil {
 		
 		return files;
 	}
-
-	/*public static Boolean isFileExists(String fileName) {
-
-		return Boolean.FALSE;
-	}*/
 
 }

@@ -28,6 +28,9 @@ public class KeyStoreUtil {
         dOut.writeInt(msk.getParameters().getN());
 
         serializeElement(msk.getAlpha(), dOut, msk.getParameters().getPairing());
+        
+        dOut.flush();
+    	dOut.close();
     }
 
     public static GGHSW13MasterSecretKeyParameters deserializeMasterSecretKey(InputStream in, Pairing pairing) throws IOException {
@@ -41,6 +44,8 @@ public class KeyStoreUtil {
         int n = dIn.readInt();//getInt();
         Element alpha = deserializeElement(dIn, pairing);
 
+        dIn.close();
+        
         return new GGHSW13MasterSecretKeyParameters(
                 new GGHSW13Parameters(pairing, n),
                 alpha
@@ -77,7 +82,7 @@ public class KeyStoreUtil {
     	}
     	
     	dOut.flush();
-    	
+    	dOut.close();
     }
     
     public static GGHSW13PublicKeyParameters deserializePublicKey(InputStream in, Pairing pairing) throws IOException {
@@ -99,6 +104,8 @@ public class KeyStoreUtil {
         for(int i = 0; i < len; i++) {
         	elems[i] = deserializeElement(dIn, pairing);
         }
+        
+        dIn.close();
         
         return new GGHSW13PublicKeyParameters(new GGHSW13Parameters(pairing, n), alpha, elems);
     }
@@ -141,6 +148,7 @@ public class KeyStoreUtil {
     	}
     	
     	dOut.flush();
+    	dOut.close();
     }
     
     public static GGHSW13SecretKeyParameters deserializeSecretKey(InputStream in, final Pairing pairing, String bits) throws IOException {
@@ -174,6 +182,8 @@ public class KeyStoreUtil {
         
         BooleanCircuit circuit = BitsUtil.generateBooleanCircuit(bits);
         
+        dIn.close();
+        
         return new GGHSW13SecretKeyParameters(new GGHSW13Parameters(pairing, n), circuit, keys);
     }
     
@@ -186,6 +196,9 @@ public class KeyStoreUtil {
     	
     	dOut.writeInt(bytes.length);
     	dOut.write(bytes);
+    	
+    	dOut.flush();
+    	dOut.close();
     }
     
     public static byte[] desreializeEncapsulation(InputStream in) throws Exception {
@@ -198,6 +211,8 @@ public class KeyStoreUtil {
     	for(int i = 0; i < length; i++) {
     		bytes[i] = dIn.readByte();
     	}
+    	
+    	dIn.close();
     	
     	return bytes;
     }

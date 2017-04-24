@@ -74,6 +74,8 @@ public class DeleteFile {
 
 				acessType.setName(Constants.ACCESS_TYPE_DELETE);
 
+				Common.user = Common.userController.getUserById(Common.user.getId());
+				
 				Boolean isPermitted = Common.permissionController.isPermitted(Common.user, resource, acessType);
 
 				if (Boolean.TRUE.equals(isPermitted)) {

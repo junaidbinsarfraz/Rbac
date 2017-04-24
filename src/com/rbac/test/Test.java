@@ -89,7 +89,7 @@ public class Test {
 					System.out.print("Enter file name : ");
 					String fileName = scan.nextLine();
 
-					FileUtil.writeIntoFile(fileName, "", Boolean.FALSE);
+					FileUtil.writeIntoFile(fileName, "".getBytes(), Boolean.FALSE);
 
 					Resource resource = new Resource();
 
@@ -152,7 +152,7 @@ public class Test {
 
 					if (Boolean.TRUE.equals(isPermitted)) {
 
-						String fileContent = FileUtil.readFile(input);
+						String fileContent = new String(FileUtil.readFile(input));
 
 						System.out.println(fileContent);
 
@@ -241,7 +241,7 @@ public class Test {
 
 						if (Boolean.TRUE.equals(isPermitted)) {
 
-							String fileContent = FileUtil.readFile(input);
+							String fileContent = new String(FileUtil.readFile(input));
 
 							System.out.println(fileContent);
 
@@ -256,7 +256,7 @@ public class Test {
 						System.out.print("Enter schedule file name : ");
 						String fileName = scan.nextLine();
 
-						FileUtil.writeIntoFile(fileName, "", Boolean.FALSE);
+						FileUtil.writeIntoFile(fileName, "".getBytes(), Boolean.FALSE);
 
 						Resource resource = new Resource();
 

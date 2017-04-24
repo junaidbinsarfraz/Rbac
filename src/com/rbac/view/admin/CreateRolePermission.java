@@ -49,6 +49,15 @@ public class CreateRolePermission {
 
 			AcessType acessType = Common.permissionController.getAcessTypeById(permission.getAccesstypeid());
 			Resource resource = Common.permissionController.getResourceById(permission.getResourceid());
+			
+			if(resource == null || acessType == null) {
+				acessType = Common.permissionController.getAcessTypeById(permission.getAccesstypeid());
+				resource = Common.permissionController.getResourceById(permission.getResourceid());
+				
+				if(resource == null || acessType == null) {
+					continue;
+				}
+			}
 
 			permissionsDescription.add(permission.getId() + ") Can " + acessType.getName() + " " + resource.getName());
 		}

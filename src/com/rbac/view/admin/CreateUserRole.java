@@ -90,7 +90,7 @@ public class CreateUserRole {
 				}
 				
 				role = Common.roleController.getRoleById(role.getId());
-
+				
 				// Assign user role
 
 				UserRole userRole = new UserRole();

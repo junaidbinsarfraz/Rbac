@@ -102,6 +102,20 @@ public class PermissionController {
 	}
 	
 	public void savePermission(Permission permission) {
+		
+		/*permission.setStatus(null);
+		
+		List<Permission> permissions = this.getPerissions(permission);
+		
+		for(Permission p : permissions) {
+			p.setStatus(Boolean.TRUE);
+			permissionHome.merge(p);
+		}
+		
+		if(permissions == null || permissions.isEmpty()) {
+			permissionHome.attachDirty(permission);
+		}*/
+		
 		permissionHome.attachDirty(permission);
 	}
 	

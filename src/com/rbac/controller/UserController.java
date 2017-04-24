@@ -11,6 +11,7 @@ import org.bouncycastle.crypto.CipherParameters;
 import com.rbac.common.Common;
 import com.rbac.crypto.common.CryptoCommon;
 import com.rbac.crypto.util.BitsUtil;
+import com.rbac.crypto.util.CryptoConstants;
 import com.rbac.crypto.util.KeyStoreUtil;
 import com.rbac.dao.AcessTypeHome;
 import com.rbac.dao.PermissionHome;
@@ -48,6 +49,23 @@ public class UserController {
 	}
 	
 	public void assignUserRole(UserRole userRole) {
+		
+		/*UserRole oldUserRole = new UserRole();
+		
+		oldUserRole.setRole(userRole.getRole());
+		oldUserRole.setUser(userRole.getUser());
+		
+		List<UserRole> userRoles = this.getUserRoles(oldUserRole);
+		
+		for(UserRole userR : userRoles) {
+			userRole.setStatus(Boolean.TRUE);
+			userRoleHome.merge(userR);
+		}
+		
+		if(userRoles == null || userRoles.isEmpty()) {
+			userRoleHome.attachDirty(userRole);
+		}*/
+		
 		userRoleHome.attachDirty(userRole);
 		
 		UserRole updatedUserRole = new UserRole();
@@ -62,7 +80,7 @@ public class UserController {
 		
 		try {
 			
-			KeyStoreUtil.serializeSecretKey((GGHSW13SecretKeyParameters) secretKey, new FileOutputStream(userRole.getUser().getUsername() + ".txt"));
+			KeyStoreUtil.serializeSecretKey((GGHSW13SecretKeyParameters) secretKey, new FileOutputStream(CryptoConstants.KEY_DIRECTORY + userRole.getUser().getUsername() + ".txt"));
 			
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -99,7 +117,7 @@ public class UserController {
 		
 		for(UserRole userR : userRoles) {
 			if((userRole.getRole() != null && (userRole.getRole().getName().equalsIgnoreCase(userR.getRole().getName()))) 
-					&& userRole.getUser() != null && (userRole.getUser().getUsername().equalsIgnoreCase(userR.getUser().getUsername()))) {
+					|| userRole.getUser() != null && (userRole.getUser().getUsername().equalsIgnoreCase(userR.getUser().getUsername()))) {
 				selectedUserRoles.add(userR);
 			}
 		}
@@ -113,14 +131,20 @@ public class UserController {
 		
 		userRoleHome.delete(userRole);
 		
+		role = Common.roleController.getRoleById(role.getId());
+		
 		Common.roleController.RoleUpdate(role);
 	}
 	
 	public void deleteUser(User user) {
-		List<UserRole> userRoles = this.getAllUserRoles();
+		UserRole userRole = new UserRole();
 		
-		for(UserRole userRole : userRoles) {
-			deleteUserRole(userRole);
+		userRole.setUser(user);
+		
+		List<UserRole> userRoles = this.getUserRoles(userRole);
+		
+		for(UserRole userR : userRoles) {
+			deleteUserRole(userR);
 		}
 		
 		userHome.delete(user);
