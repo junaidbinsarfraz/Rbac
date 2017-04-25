@@ -79,7 +79,13 @@ public class RoleController {
 		
 		CryptoCommon.lastFileName = resource.getName();
 		
-		CryptoCommon.encryptionController.reEncrypt(bytes, rolePermission.getRole().getBits());
+		byte[] reEncryptedBytes = CryptoCommon.encryptionController.reEncrypt(bytes, rolePermission.getRole().getBits());
+		
+		try {
+			FileUtil.writeIntoFile(CryptoCommon.lastFileName, reEncryptedBytes, Boolean.TRUE);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public List<RolePermission> getRolePermissoins(RolePermission rolePermission) {
@@ -110,7 +116,13 @@ public class RoleController {
 		
 		CryptoCommon.lastFileName = resource.getName();
 		
-		CryptoCommon.encryptionController.reEncrypt(bytes, rolePermission.getRole().getBits());
+		byte[] reEncryptedBytes = CryptoCommon.encryptionController.reEncrypt(bytes, rolePermission.getRole().getBits());
+		
+		try {
+			FileUtil.writeIntoFile(CryptoCommon.lastFileName, reEncryptedBytes, Boolean.TRUE);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
 		this.RoleUpdate(rolePermission.getRole());
 	}
@@ -162,7 +174,13 @@ public class RoleController {
 			
 			CryptoCommon.lastFileName = resource.getName();
 			
-			CryptoCommon.encryptionController.reEncrypt(bytes, role.getBits());
+			byte[] reEncryptedBytes = CryptoCommon.encryptionController.reEncrypt(bytes, role.getBits());
+			
+			try {
+				FileUtil.writeIntoFile(CryptoCommon.lastFileName, reEncryptedBytes, Boolean.TRUE);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		UserRole userRole = new UserRole();

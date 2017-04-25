@@ -50,14 +50,14 @@ public class EncryptionController {
         }
     }
 	
-	public byte[] encrypt(String message) {
+	public byte[] encrypt(byte[] message) {
         try {
         	
         	byte[] encapsulation = CryptoCommon.encryptionController.initEncryption(CryptoConstants.ASSIGNMENT);
         	
         	KeyStoreUtil.serializeEncapsulation(encapsulation, new FileOutputStream(CryptoConstants.ENCAPSULATION_DIRECTORY + CryptoConstants.ENCAPSULATION_BYTE_FILE + CryptoCommon.lastFileName));
         	
-            return CryptoCommon.kemCipher.doFinal(message.getBytes());
+            return CryptoCommon.kemCipher.doFinal(message);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -65,7 +65,7 @@ public class EncryptionController {
 	
 	// EncPE(FS[0], y, DecPE(msk, FS[p*]))
 	public byte[] reEncrypt(byte[] ciphertext, String bits) {
-		return this.encrypt(new String(this.decrypt(CryptoCommon.keyController.generateUserKey(bits == null ? CryptoCommon.lastBitsUsedForCircuit : bits), ciphertext)));
+		return this.encrypt(this.decrypt(CryptoCommon.keyController.generateUserKey(bits == null ? CryptoCommon.lastBitsUsedForCircuit : bits), ciphertext));
 	}
 	
 }

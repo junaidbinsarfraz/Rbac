@@ -13,7 +13,9 @@ public interface CryptoConstants {
 	String MASTER_SECRET_KEY_FILE = "msk.txt";
 	String PUBLIC_KEY_FILE = "public.txt";
 	String ENCAPSULATION_BYTE_FILE = "encapsulation-";
-	String KEY_DIRECTORY = "D:\\Junaid\\Github\\Rbac\\keys\\";
-	String ENCAPSULATION_DIRECTORY = "D:\\Junaid\\Github\\Rbac\\encapsulation\\";
+//	String KEY_DIRECTORY = "D:\\Junaid\\Github\\Rbac\\keys\\";
+//	String ENCAPSULATION_DIRECTORY = "D:\\Junaid\\Github\\Rbac\\encapsulation\\";
+	String KEY_DIRECTORY = "E:\\GithubNew\\Rbac\\keys\\";
+	String ENCAPSULATION_DIRECTORY = "E:\\GithubNew\\Rbac\\encapsulation\\";
 	
 }

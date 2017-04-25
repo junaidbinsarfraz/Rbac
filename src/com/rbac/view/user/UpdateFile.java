@@ -133,7 +133,7 @@ public void initialize(Stage primaryStage) {
 						
 //						FileUtil.appendIntoFile(filename, content);
 						
-						FileUtil.writeIntoFile(filename, CryptoCommon.encryptionController.encrypt(new String(destination)), Boolean.TRUE);
+						FileUtil.writeIntoFile(filename, CryptoCommon.encryptionController.encrypt(destination), Boolean.TRUE);
 						
 					} catch (IOException e) {
 						errorLB.setText(e.getMessage());
