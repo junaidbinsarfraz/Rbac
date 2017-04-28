@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.rbac.common.Common;
 import com.rbac.model.UserRole;
+import com.rbac.util.Constants;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -76,7 +77,7 @@ public class DeleteUserRole {
 
 		HBox buttonHB = new HBox(10);
 		buttonHB.setAlignment(Pos.CENTER);
-		buttonHB.getChildren().addAll(cancelBT, deleteBT);
+		buttonHB.getChildren().addAll(deleteBT, cancelBT);
 
 		VBox vBox = new VBox(5);
 		vBox.setAlignment(Pos.CENTER);
@@ -85,9 +86,9 @@ public class DeleteUserRole {
 		StackPane root = new StackPane();
 		root.getChildren().addAll(vBox);
 
-		Scene scene = new Scene(root, 300, 300);
+		Scene scene = new Scene(root, Constants.WIDTH, Constants.HEIGHT);
 
-		primaryStage.setTitle("Delete User Role");
+		primaryStage.setTitle("Admin | Delete User Role");
 		primaryStage.setScene(scene);
 		primaryStage.show();
 

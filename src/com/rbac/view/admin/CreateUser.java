@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.rbac.common.Common;
 import com.rbac.model.User;
+import com.rbac.util.Constants;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -109,9 +110,9 @@ public class CreateUser {
 		StackPane root = new StackPane();
 		root.getChildren().addAll(vBox);
 
-		Scene scene = new Scene(root, 300, 300);
+		Scene scene = new Scene(root, Constants.WIDTH, Constants.HEIGHT);
 
-		primaryStage.setTitle("Create User");
+		primaryStage.setTitle("Admin | Create User");
 		primaryStage.setScene(scene);
 		primaryStage.show();
 

@@ -9,18 +9,24 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.rbac.crypto.util.CryptoConstants;
+
+/**
+ * The class FileUtil is use to write bytes into the file, read bytes from file
+ * and delete file
+ */
 public class FileUtil {
 
 	public static byte[] readFile(String fileName) {
 
 		// Read from file
 		File file = new File(Constants.FILE_DIRECTORY + fileName);
-		
+
 		if (file.exists()) {
-			
+
 			try {
 				byte[] bytes = Files.readAllBytes(file.toPath());
-				
+
 				return bytes;
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -36,26 +42,26 @@ public class FileUtil {
 
 		File file = new File(Constants.FILE_DIRECTORY + fileName);
 
-		if(Boolean.FALSE.equals(isUpdated)) {
+		if (Boolean.FALSE.equals(isUpdated)) {
 			if (Boolean.FALSE.equals(file.exists())) {
 				file.createNewFile();
 			} else {
 				return Boolean.FALSE;
 			}
 		}
-		
+
 		FileOutputStream stream = new FileOutputStream(file);
 		try {
 			stream.write(value);
-		} catch(Exception e) {
+		} catch (Exception e) {
 			return Boolean.FALSE;
 		} finally {
 			stream.flush();
-		    stream.close();
+			stream.close();
 		}
-		
+
 		return Boolean.TRUE;
-		
+
 	}
 
 	public static void appendIntoFile(String fileName, String value) throws IOException {
@@ -97,37 +103,40 @@ public class FileUtil {
 			}
 		}
 	}
-	
+
 	public static Boolean deleteFile(String fileName) {
-		
+
 		File file = new File(Constants.FILE_DIRECTORY + fileName);
-		
-		return file.delete();
+
+		File encapsulatedFile = new File(CryptoConstants.ENCAPSULATION_DIRECTORY + CryptoConstants.ENCAPSULATION_BYTE_FILE + fileName);
+
+		return encapsulatedFile.delete() && file.delete();
 	}
-	
-	
+
 	public static List<String> listFiles() {
-		
+
 		List<String> files = new ArrayList<String>();
-		
+
 		try {
-			
+
 			File currentDirectory = new File(new File(Constants.FILE_DIRECTORY).getAbsolutePath());
-			/*System.out.println(currentDirectory.getCanonicalPath());
-			System.out.println(currentDirectory.getAbsolutePath());*/
-			
-			if(Boolean.TRUE.equals(currentDirectory.exists())) {
-				if(Boolean.TRUE.equals(currentDirectory.isDirectory())) {
-					for(File file : currentDirectory.listFiles()) {
+			/*
+			 * System.out.println(currentDirectory.getCanonicalPath());
+			 * System.out.println(currentDirectory.getAbsolutePath());
+			 */
+
+			if (Boolean.TRUE.equals(currentDirectory.exists())) {
+				if (Boolean.TRUE.equals(currentDirectory.isDirectory())) {
+					for (File file : currentDirectory.listFiles()) {
 						files.add(file.getName());
 					}
 				}
 			}
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		return files;
 	}
 

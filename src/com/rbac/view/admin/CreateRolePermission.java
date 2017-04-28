@@ -9,6 +9,7 @@ import com.rbac.model.Permission;
 import com.rbac.model.Resource;
 import com.rbac.model.Role;
 import com.rbac.model.RolePermission;
+import com.rbac.util.Constants;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -137,7 +138,7 @@ public class CreateRolePermission {
 
 		HBox buttonHB = new HBox(10);
 		buttonHB.setAlignment(Pos.CENTER);
-		buttonHB.getChildren().addAll(cancelBT, createBT);
+		buttonHB.getChildren().addAll(createBT, cancelBT);
 
 		VBox vBox = new VBox(5);
 		vBox.setAlignment(Pos.CENTER);
@@ -146,9 +147,9 @@ public class CreateRolePermission {
 		StackPane root = new StackPane();
 		root.getChildren().addAll(vBox);
 
-		Scene scene = new Scene(root, 300, 300);
+		Scene scene = new Scene(root, Constants.WIDTH, Constants.HEIGHT);
 
-		primaryStage.setTitle("Create Role Permission");
+		primaryStage.setTitle("Admin | Create Role Permission");
 		primaryStage.setScene(scene);
 		primaryStage.show();
 

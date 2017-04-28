@@ -6,6 +6,7 @@ import com.rbac.common.Common;
 import com.rbac.model.Role;
 import com.rbac.model.User;
 import com.rbac.model.UserRole;
+import com.rbac.util.Constants;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -108,7 +109,7 @@ public class CreateUserRole {
 
 		HBox buttonHB = new HBox(10);
 		buttonHB.setAlignment(Pos.CENTER);
-		buttonHB.getChildren().addAll(cancelBT, createBT);
+		buttonHB.getChildren().addAll(createBT, cancelBT);
 
 		VBox vBox = new VBox(5);
 		vBox.setAlignment(Pos.CENTER);
@@ -117,9 +118,9 @@ public class CreateUserRole {
 		StackPane root = new StackPane();
 		root.getChildren().addAll(vBox);
 
-		Scene scene = new Scene(root, 300, 300);
+		Scene scene = new Scene(root, Constants.WIDTH, Constants.HEIGHT);
 
-		primaryStage.setTitle("Create User Role");
+		primaryStage.setTitle("Admin | Create User Role");
 		primaryStage.setScene(scene);
 		primaryStage.show();
 

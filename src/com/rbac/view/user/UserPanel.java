@@ -1,5 +1,8 @@
 package com.rbac.view.user;
 
+import com.rbac.common.Common;
+import com.rbac.util.Constants;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -66,9 +69,9 @@ public class UserPanel {
 		StackPane root = new StackPane();
 		root.getChildren().addAll(vBox);
 
-		Scene scene = new Scene(root, 300, 300);
+		Scene scene = new Scene(root, Constants.WIDTH, Constants.HEIGHT);
 
-		primaryStage.setTitle("Main Screen");
+		primaryStage.setTitle((Common.user != null ? Common.user.getName() + " | " : "") + "Main Screen");
 		primaryStage.setScene(scene);
 		primaryStage.show();
 		

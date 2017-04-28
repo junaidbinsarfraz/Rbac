@@ -55,6 +55,8 @@ public class CreateFile {
 			@Override
 			public void handle(ActionEvent event) {
 				
+				errorLB.setText("");
+				
 				String fileName = fileNameTF.getText();
 				
 				if(fileName == null || "".equals(fileName)) {
@@ -123,7 +125,7 @@ public class CreateFile {
 
 		HBox buttonHB = new HBox(10);
 		buttonHB.setAlignment(Pos.CENTER);
-		buttonHB.getChildren().addAll(cancelBT, createBT);
+		buttonHB.getChildren().addAll(createBT, cancelBT);
 		
 		VBox loginVB = new VBox(20);
 		loginVB.setAlignment(Pos.CENTER);
@@ -132,10 +134,10 @@ public class CreateFile {
 		StackPane root = new StackPane();
 		root.getChildren().addAll(loginVB);
 
-		Scene scene = new Scene(root, 300, 300);
+		Scene scene = new Scene(root, Constants.WIDTH, Constants.HEIGHT);
 
 		primaryStage.setScene(scene);
-		primaryStage.setTitle("Create File");
+		primaryStage.setTitle((Common.user != null ? Common.user.getName() + " | " : "") + "Create File");
 		primaryStage.show();
 		
 	}

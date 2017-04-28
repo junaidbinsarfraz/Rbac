@@ -28,102 +28,123 @@ import it.unisa.dia.gas.crypto.jpbc.fe.abe.gghsw13.params.GGHSW13PublicKeyParame
 import it.unisa.dia.gas.crypto.jpbc.fe.abe.gghsw13.params.GGHSW13SecretKeyGenerationParameters;
 import it.unisa.dia.gas.crypto.kem.cipher.engines.KEMCipher;
 
+/**
+ * The class KeyController is use to initialize, generate key-pair,
+ * master-secret-key, public-key and secret-key
+ */
 public class KeyController {
-	
+
 	private AsymmetricCipherKeyPair keyPair;
-	
+
+	/**
+	 * The initKeys() method is call just once and only once i.e. at the start
+	 * when no user is created. It is use to generate master-secret-key and
+	 * public-key, serialize them
+	 * 
+	 * @throws Exception
+	 */
 	public void initKeys() throws Exception {
 		Security.addProvider(new BouncyCastleProvider());
-		
-		CryptoCommon.kemCipher = new KEMCipher(
-                Cipher.getInstance(CryptoConstants.ALGORITHM, "BC"),
-                new GGHSW13KEMEngine()
-        );
 
-        // build the initialization vector.  This example is all zeros, but it
-        // could be any value or generated using a random number generator.
-		CryptoCommon.iv = new IvParameterSpec(new byte[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
-		
+		CryptoCommon.kemCipher = new KEMCipher(Cipher.getInstance(CryptoConstants.ALGORITHM, "BC"), new GGHSW13KEMEngine());
+
+		// build the initialization vector. This example is all zeros, but it
+		// could be any value or generated using a random number generator.
+		CryptoCommon.iv = new IvParameterSpec(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+
 		setup(CryptoConstants.N);
-		
+
 		CryptoCommon.masterSecretKey = keyPair.getPrivate();
-		
+
 		CryptoCommon.publicKey = keyPair.getPublic();
-		
-		KeyStoreUtil.serializeMasterSecretKey((GGHSW13MasterSecretKeyParameters) CryptoCommon.masterSecretKey, new FileOutputStream(CryptoConstants.KEY_DIRECTORY + CryptoConstants.MASTER_SECRET_KEY_FILE));
-		
-		KeyStoreUtil.serializePublicKey((GGHSW13PublicKeyParameters) CryptoCommon.publicKey, new FileOutputStream(CryptoConstants.KEY_DIRECTORY + CryptoConstants.PUBLIC_KEY_FILE));
-		
-//		KeyStoreUtil.serializeEncapsulation(CryptoCommon.encapsulation, new FileOutputStream(CryptoConstants.ENCAPSULATION_BYTE_FILE));
+
+		KeyStoreUtil.serializeMasterSecretKey((GGHSW13MasterSecretKeyParameters) CryptoCommon.masterSecretKey,
+				new FileOutputStream(CryptoConstants.KEY_DIRECTORY + CryptoConstants.MASTER_SECRET_KEY_FILE));
+
+		KeyStoreUtil.serializePublicKey((GGHSW13PublicKeyParameters) CryptoCommon.publicKey,
+				new FileOutputStream(CryptoConstants.KEY_DIRECTORY + CryptoConstants.PUBLIC_KEY_FILE));
+
 	}
-	
+
+	/**
+	 * The init() method is call every time the program runs but not after
+	 * initKeys() method. It is use to retrieve the master-secret-key and
+	 * public-key
+	 * 
+	 * @throws Exception
+	 */
 	public void init() throws Exception {
 		Security.addProvider(new BouncyCastleProvider());
-		
-		CryptoCommon.kemCipher = new KEMCipher(
-                Cipher.getInstance(CryptoConstants.ALGORITHM, "BC"),
-                new GGHSW13KEMEngine()
-        );
 
-        // build the initialization vector.  This example is all zeros, but it
-        // could be any value or generated using a random number generator.
-		CryptoCommon.iv = new IvParameterSpec(new byte[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
-		
-		CryptoCommon.masterSecretKey = KeyStoreUtil.deserializeMasterSecretKey(new FileInputStream(CryptoConstants.KEY_DIRECTORY + CryptoConstants.MASTER_SECRET_KEY_FILE), CryptoCommon.paring);
-		
-		CryptoCommon.publicKey = KeyStoreUtil.deserializePublicKey(new FileInputStream(CryptoConstants.KEY_DIRECTORY + CryptoConstants.PUBLIC_KEY_FILE), CryptoCommon.paring);
-		
-//		CryptoCommon.encapsulation = KeyStoreUtil.desreializeEncapsulation(new FileInputStream(CryptoConstants.ENCAPSULATION_BYTE_FILE));
-		
-		
+		CryptoCommon.kemCipher = new KEMCipher(Cipher.getInstance(CryptoConstants.ALGORITHM, "BC"), new GGHSW13KEMEngine());
+
+		// build the initialization vector. This example is all zeros, but it
+		// could be any value or generated using a random number generator.
+		CryptoCommon.iv = new IvParameterSpec(new byte[] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+
+		CryptoCommon.masterSecretKey = KeyStoreUtil.deserializeMasterSecretKey(
+				new FileInputStream(CryptoConstants.KEY_DIRECTORY + CryptoConstants.MASTER_SECRET_KEY_FILE), CryptoCommon.paring);
+
+		CryptoCommon.publicKey = KeyStoreUtil
+				.deserializePublicKey(new FileInputStream(CryptoConstants.KEY_DIRECTORY + CryptoConstants.PUBLIC_KEY_FILE), CryptoCommon.paring);
+
 	}
-	
+
+	/**
+	 * The keyGen() method is use to generate the secret key using circuit
+	 * 
+	 * @param circuit
+	 * @return secret-key
+	 */
 	public CipherParameters keyGen(BooleanCircuit circuit) {
-        GGHSW13SecretKeyGenerator keyGen = new GGHSW13SecretKeyGenerator();
-        keyGen.init(new GGHSW13SecretKeyGenerationParameters(
-                (GGHSW13PublicKeyParameters) CryptoCommon.publicKey,
-                (GGHSW13MasterSecretKeyParameters) CryptoCommon.masterSecretKey,
-                circuit
-        ));
+		GGHSW13SecretKeyGenerator keyGen = new GGHSW13SecretKeyGenerator();
+		keyGen.init(new GGHSW13SecretKeyGenerationParameters((GGHSW13PublicKeyParameters) CryptoCommon.publicKey,
+				(GGHSW13MasterSecretKeyParameters) CryptoCommon.masterSecretKey, circuit));
 
-        return keyGen.generateKey();
-    }
-	
+		return keyGen.generateKey();
+	}
+
+	/**
+	 * The setup() method is use to setup the keyPair
+	 * 
+	 * @param n
+	 * @return
+	 */
 	public AsymmetricCipherKeyPair setup(int n) {
-        GGHSW13KeyPairGenerator setup = new GGHSW13KeyPairGenerator();
-        setup.init(new GGHSW13KeyPairGenerationParameters(
-                new SecureRandom(),
-                new GGHSW13ParametersGenerator().init(
-                		CryptoCommon.paring,
-                        n).generateParameters()
-        ));
+		GGHSW13KeyPairGenerator setup = new GGHSW13KeyPairGenerator();
+		setup.init(new GGHSW13KeyPairGenerationParameters(new SecureRandom(),
+				new GGHSW13ParametersGenerator().init(CryptoCommon.paring, n).generateParameters()));
 
-        return (keyPair = setup.generateKeyPair());
-    }
-	
+		return (keyPair = setup.generateKeyPair());
+	}
+
 	// Circuit generation
-	
-	// User KeyGen. Can also be use for master secret key to generate dummy user-secret-key
+
+	// User KeyGen. Can also be use for master secret key to generate dummy
+	// user-secret-key
+	/**
+	 * The generateUserKey() method is use to generate the secret-key using bit
+	 * 
+	 * @param bits
+	 * @return secret-key
+	 */
 	public CipherParameters generateUserKey(String bits) {
-		
-		if(bits.length() < CryptoConstants.BIT_LENGTH) {
+
+		if (bits.length() < CryptoConstants.BIT_LENGTH) {
 			return null;
 		}
-		
-		// Generate Circuit 
-		
-		BooleanCircuit circuit = BitsUtil.generateBooleanCircuit(bits);
-		
-		GGHSW13SecretKeyGenerator keyGen = new GGHSW13SecretKeyGenerator();
-        keyGen.init(new GGHSW13SecretKeyGenerationParameters(
-                (GGHSW13PublicKeyParameters) CryptoCommon.publicKey,
-                (GGHSW13MasterSecretKeyParameters) CryptoCommon.masterSecretKey,
-                circuit
-        ));
-        
-        CryptoCommon.lastBitsUsedForCircuit = bits;
 
-        return keyGen.generateKey();
+		// Generate Circuit
+
+		BooleanCircuit circuit = BitsUtil.generateBooleanCircuit(bits);
+
+		GGHSW13SecretKeyGenerator keyGen = new GGHSW13SecretKeyGenerator();
+		keyGen.init(new GGHSW13SecretKeyGenerationParameters((GGHSW13PublicKeyParameters) CryptoCommon.publicKey,
+				(GGHSW13MasterSecretKeyParameters) CryptoCommon.masterSecretKey, circuit));
+
+		CryptoCommon.lastBitsUsedForCircuit = bits;
+
+		return keyGen.generateKey();
 	}
 
 }

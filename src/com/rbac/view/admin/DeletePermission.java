@@ -8,6 +8,7 @@ import com.rbac.model.AcessType;
 import com.rbac.model.Permission;
 import com.rbac.model.Resource;
 import com.rbac.model.RolePermission;
+import com.rbac.util.Constants;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -110,7 +111,7 @@ public class DeletePermission {
 
 		HBox buttonHB = new HBox(10);
 		buttonHB.setAlignment(Pos.CENTER);
-		buttonHB.getChildren().addAll(cancelBT, deleteBT);
+		buttonHB.getChildren().addAll(deleteBT, cancelBT);
 
 		VBox vBox = new VBox(5);
 		vBox.setAlignment(Pos.CENTER);
@@ -119,9 +120,9 @@ public class DeletePermission {
 		StackPane root = new StackPane();
 		root.getChildren().addAll(vBox);
 
-		Scene scene = new Scene(root, 300, 300);
+		Scene scene = new Scene(root, Constants.WIDTH, Constants.HEIGHT);
 
-		primaryStage.setTitle("Delete Permission");
+		primaryStage.setTitle("Admin | Delete Permission");
 		primaryStage.setScene(scene);
 		primaryStage.show();
 

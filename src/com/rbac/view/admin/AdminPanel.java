@@ -1,5 +1,7 @@
 package com.rbac.view.admin;
 
+import com.rbac.util.Constants;
+
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -116,9 +118,9 @@ public class AdminPanel {
 		StackPane root = new StackPane();
 		root.getChildren().addAll(vBox);
 
-		Scene scene = new Scene(root, 300, 300);
+		Scene scene = new Scene(root, Constants.WIDTH, Constants.HEIGHT);
 
-		primaryStage.setTitle("Main Screen");
+		primaryStage.setTitle("Admin | Main Screen");
 		primaryStage.setScene(scene);
 		primaryStage.show();
 

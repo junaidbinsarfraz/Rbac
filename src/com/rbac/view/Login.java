@@ -31,7 +31,7 @@ public class Login extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		
+
 		Label errorLB = new Label();
 		errorLB.setTextFill(Color.web("#d1433e"));
 
@@ -77,9 +77,9 @@ public class Login extends Application {
 						break;
 					}
 				}
-				
+
 				primaryStage.hide();
-				
+
 				if (Boolean.TRUE.equals(Common.isAdmin)) {
 					// Send to admin panel
 					new AdminPanel().initialize(new Stage());
@@ -107,14 +107,14 @@ public class Login extends Application {
 		primaryStage.setTitle("Login");
 		primaryStage.show();
 	}
-	
-public static void main(String[] args) {
-		
+
+	public static void main(String[] args) {
+
 		List<User> users = Common.userController.getAllUser();
-		
-		if(users == null || users.isEmpty()) {
+
+		if (users == null || users.isEmpty()) {
 			// Initialize Everything
-			
+
 			try {
 				CryptoCommon.keyController.initKeys();
 			} catch (Exception e) {
@@ -122,60 +122,59 @@ public static void main(String[] args) {
 				System.out.println("Unable to initialize C-RBAC");
 				return;
 			}
-			
+
 			User user = new User();
-			
+
 			user.setName("Admin");
 			user.setPassword("admin");
 			user.setUsername("admin");
-			
+
 			Common.userController.saveUser(user);
-			
+
 			user = Common.userController.getUsers(user).get(0);
-			
+
 			Role role = new Role();
-			
+
 			role.setName(Constants.ROLE_ADMIN);
-			
+
 			role = Common.roleController.getRoles(role).get(0);
-			
+
 			UserRole userRole = new UserRole();
-			
+
 			userRole.setStatus(Boolean.TRUE);
 			userRole.setRole(role);
 			userRole.setUser(user);
-			
+
 			Common.userController.saveUserRole(userRole);
-			
+
 		} else {
-			
+
 			try {
 				CryptoCommon.keyController.init();
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				System.out.println("Unable to initialize C-RBAC");
 				return;
 			}
-			
+
 		}
-		
+
 		// Set last bits and bytes
 		Role doctor = new Role();
-		
+
 		doctor.setName(Constants.ROLE_DOCTOR);
-		
+
 		doctor = Common.roleController.getRoles(doctor).get(0);
-		
+
 		Role nurse = new Role();
-		
+
 		nurse.setName(Constants.ROLE_NURSE);
-		
+
 		nurse = Common.roleController.getRoles(nurse).get(0);
-		
+
 		CryptoCommon.lastBytesUserForCircuit = doctor.getBytes() + nurse.getBytes();
 		CryptoCommon.lastBitsUsedForCircuit = BitsUtil.get32BitString(Integer.toBinaryString(CryptoCommon.lastBytesUserForCircuit));
-		
+
 		launch(args);
 	}
 

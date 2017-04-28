@@ -59,6 +59,8 @@ public class DeleteFile {
 			@Override
 			public void handle(ActionEvent event) {
 				
+				errorLB.setText("");
+				
 				String filename = fileComboBox.getSelectionModel().getSelectedItem();
 
 				if (filename == null || "".equals(filename)) {
@@ -133,7 +135,7 @@ public class DeleteFile {
 		
 		HBox buttonHB = new HBox(10);
 		buttonHB.setAlignment(Pos.CENTER);
-		buttonHB.getChildren().addAll(cancelBT, deleteBT);
+		buttonHB.getChildren().addAll(deleteBT, cancelBT);
 		
 		VBox loginVB = new VBox(20);
 		loginVB.setAlignment(Pos.CENTER);
@@ -142,10 +144,10 @@ public class DeleteFile {
 		StackPane root = new StackPane();
 		root.getChildren().addAll(loginVB);
 
-		Scene scene = new Scene(root, 300, 300);
+		Scene scene = new Scene(root, Constants.WIDTH, Constants.HEIGHT);
 
 		primaryStage.setScene(scene);
-		primaryStage.setTitle("Delete File");
+		primaryStage.setTitle((Common.user != null ? Common.user.getName() + " | " : "") + "Delete File");
 		primaryStage.show();
 		
 	}

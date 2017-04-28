@@ -75,6 +75,8 @@ public void initialize(Stage primaryStage) {
 			@Override
 			public void handle(ActionEvent event) {
 				
+				errorLB.setText("");
+				
 				String filename = fileComboBox.getSelectionModel().getSelectedItem();
 
 				if (filename == null || "".equals(filename)) {
@@ -154,7 +156,7 @@ public void initialize(Stage primaryStage) {
 		
 		HBox buttonHB = new HBox(10);
 		buttonHB.setAlignment(Pos.CENTER);
-		buttonHB.getChildren().addAll(cancelBT, appendBT);
+		buttonHB.getChildren().addAll(appendBT, cancelBT);
 		
 		VBox loginVB = new VBox(20);
 		loginVB.setAlignment(Pos.CENTER);
@@ -163,10 +165,10 @@ public void initialize(Stage primaryStage) {
 		StackPane root = new StackPane();
 		root.getChildren().addAll(loginVB);
 
-		Scene scene = new Scene(root, 300, 300);
+		Scene scene = new Scene(root, Constants.WIDTH, Constants.HEIGHT);
 
 		primaryStage.setScene(scene);
-		primaryStage.setTitle("Append Into File");
+		primaryStage.setTitle((Common.user != null ? Common.user.getName() + " | " : "") + "Append Into File");
 		primaryStage.show();
 		
 	}
